@@ -1,4 +1,4 @@
-import apiHelper from "./apiHelper";
+import APIHelper from "./apiHelper";
 
 /**
  * All declarations
@@ -6,22 +6,22 @@ import apiHelper from "./apiHelper";
  * @returns response
  */
 const addCard = async (data, bid) => {
-    return await apiHelper("POST", "/api/v1/payment/addCard/" + bid, data);
+    return await APIHelper("POST", "/api/v1/payment/addCard/" + bid, data);
 };
 
 const getBookingState = async (bid) => {
-    return await apiHelper("GET", "/api/v1/booking/config/" + bid)
+    return await APIHelper("GET", "/api/v1/booking/config/" + bid)
 };
 
 const extendReservation = async (data) => {
-    return await apiHelper("POST", "/api/v1/prepaid/extendReservation", data)
+    return await APIHelper("POST", "/api/v1/prepaid/extendReservation", data)
 }
 
 const getRate = async (data) => {
-    return await apiHelper("POST", "/api/v2/getRate", data)
+    return await APIHelper("POST", "/api/v2/getRate", data)
 }
 const getPedestrianAccess = async (bid, source) => {
-    return await apiHelper("POST", "api/v1/open/" + bid,
+    return await APIHelper("POST", "api/v1/open/" + bid,
         { source: source })
 }
 const qrCheckout = async (data, bid) => {
@@ -31,7 +31,7 @@ const qrCheckout = async (data, bid) => {
         data
     )
 }
-const validateBooking = async (data, bid) => { return await apiHelper("POST", "/api/v1/validate/" + bid, data) }
+const validateBooking = async (data, bid) => { return await APIHelper("POST", "/api/v1/validate/" + bid, data) }
 
 const getZoneDetails = async (searchParamKey, searchParamValue) => {
     return await APIHelper(
