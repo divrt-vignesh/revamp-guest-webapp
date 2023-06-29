@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import api from './api.js';
+import API from './api';
 import { mapGetters } from "vuex";
 export default {
   name: 'App',
@@ -50,25 +50,125 @@ export default {
     });
   },
   async created() {
+    const params = new URLSearchParams(window.location.search)
+
     var self = this;
+    if (
+      window.location.search.includes("zcode") &&
+      (window.location.href.includes("createreservation"))
+    ) {
+      return;
+    } else if (window.location.href.includes("successreservation")) {
+      self.$router.replace({ path: "createreservation" });
+    } else if (window.location.href.includes("confirmreservation")) {
+      self.$router.push({ name: 'hostpass', query: { zcode: '99999', sessiontype: 'hostpass' } });
+      return
+    } else if (
+      window.location.search.includes("zcode") &&
+      window.location.href.includes("ondemand")
+    ) {
+      self.$store.commit('SET_TEMPLATE_FLAGS', 'ondemand-flag')
+      self.$router.push({ name: 'ondemand', query: { zcode: '99999', sessiontype: 'ondemand' } });
+      return;
+    }
+    else if ((window.location.search.includes("zcode") ||
+      window.location.search.includes("gateid")) && window.location.href.includes('bid')) {
+      return;
+    }
+    else if (
+      (window.location.search.includes("zcode") ||
+        window.location.search.includes("gateid"))
+    ) {
+      self.$router.push({ name: 'cico', query: { zcode: '99999', sessiontype: 'cico' } });
+      return;
+    }
+    else if (window.location.search.includes("bid")) {
+
+
+      let bookingId = params.get('bid');
+      let bookingState = bookingId == "/" ? null : await self.getBookingState(bookingId);
+      let entryMode = this.bookingDetails?.booking?.entryMode;
+      switch (bookingState) {
+        case "0":
+          self.$router.push({ name: 'checkin', query: { bid: bookingId, state: 'checkin' } });
+          break;
+        case "2":
+          if (entryMode == "OD") {
+            self.$router.push({ name: 'odExtension', query: { bid: bookingId, mode: 'extendondemand' } });
+            return;
+          }
+          this.bookingDetails?.booking?.isLPRVerified == "0" &&
+            this.bookingDetails?.zone?.isGated == "0"
+            ? self.$router.push({ name: 'loadsession', query: { bid: bookingId, state: 'loadsession' } })
+            : self.$router.push({ name: 'checkedin', query: { bid: bookingId, state: 'checkedin' } });
+
+          break;
+        case "8":
+          // console.log(this.prepaidExit)
+          if (this.prepaidExit) {
+            this.reEnter(bookingId)
+          }
+          else if (!(window.location.href.includes('/receipt'))) {
+            self.$router.push({ name: 'checkout', query: { bid: bookingId, state: 'checkout' } });
+          }
+          break;
+        case "5":
+          self.$router.push({ name: 'success', query: { bid: bookingId, state: 'success' } });
+          break;
+        case "10":
+          if (this.prepaidExit) {
+            this.reEnter(bookingId);
+          }
+          else if (!(window.location.href.includes('/receipt'))) {
+            self.$router.push({ name: 'checkout', query: { bid: bookingId, state: 'checkout' } });
+          }
+          break;
+        case "11":
+          if (this.prepaidExit) {
+            this.reEnter(bookingId);
+          }
+          else if (!(window.location.href.includes('/receipt'))) {
+            self.$router.push({ name: 'checkout', query: { bid: bookingId, state: 'checkout' } });
+          }
+          break;
+        case "16":
+          self.$router.push({ name: 'unpaidexit', query: { bid: bookingId, state: 'unpaidexit' } });
+          break;
+        case "19":
+          self.$router.push({ name: 'promisetopay', query: { bid: bookingId, mode: 'promisetopay' } });
+          break;
+        case "-99":
+          self.$router.push({ name: 'expired', query: { bid: bookingId, state: 'expired' } });
+          break;
+        case "99":
+          self.$router.push({ name: 'cancelled', query: { bid: bookingId, state: 'cancelled' } });
+          break;
+        case null:
+          self.$router.push({ name: 'invalidbooking', query: { bid: bookingId, state: 'invalidbooking' } });
+          break;
+      }
+    }
+    else {
+      self.$router.push({ name: 'nothing', })
+    }
   },
   methods: {
     async reEnter(bookingId) {
       if (bookingId != null) {
         try {
           var self = this;
-          var bDetails = api.reEnter(bookingId)
+          var bDetails = await API.reEnter(bookingId)
           this.$store.commit(
             "SET_BOOKING_DETAILS",
             bDetails.data?.data ? bDetails.data.data : null
           );
           let bookingState = bDetails.data?.data?.booking?.state
           if ((bookingState == 8 || bookingState == 10 || bookingState == 11) && (!(window.location.href.includes('/receipt')))) {
-            this.$router.replace({ path: "/checkout" });
+            self.$router.push({ name: 'checkout', query: { bid: bookingId, state: 'checkout' } });
           } else if (bookingState == 2) {
-            this.$router.replace({ path: "/checkedin" });
+            self.$router.push({ name: 'checkedin', query: { bid: bookingId, state: 'checkedin' } });
           } else if (bookingState == 0) {
-            this.$router.replace({ path: "/checkin" });
+            self.$router.push({ name: 'checkin', query: { bid: bookingId, state: 'checkin' } });
           } else {
             setTimeout(async () => {
               await self.reEnter();
@@ -81,7 +181,7 @@ export default {
     },
     async getBookingState(bookingId) {
       try {
-        var bookingDetails = api.getBookingState(bookingId)
+        var bookingDetails = await API.getBookingState(bookingId)
         // bookingDetails.data.serverName == 'dev' ? document.querySelector('meta[name="theme-color"]').setAttribute("content", "#43A047") : "";
         this.$store.commit(
           "SET_BOOKING_DETAILS",
@@ -93,6 +193,7 @@ export default {
             ? bookingDetails.data.serverName
             : null
         );
+        console.log(bookingDetails?.data?.data?.booking?.state)
         return bookingDetails.data?.data?.booking?.state
           ? bookingDetails.data.data.booking.state
           : null;

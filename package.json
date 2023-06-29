@@ -1,6 +1,6 @@
 {
-  "name": "guest-parking",
-  "version": "2.0.0",
+  "name": "revamp-guest-parking",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
