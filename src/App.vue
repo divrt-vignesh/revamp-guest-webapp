@@ -49,7 +49,36 @@ export default {
       }
     });
   },
+  async created() {
+    var self = this;
+  },
   methods: {
+    async reEnter(bookingId) {
+      if (bookingId != null) {
+        try {
+          var self = this;
+          var bDetails = api.reEnter(bookingId)
+          this.$store.commit(
+            "SET_BOOKING_DETAILS",
+            bDetails.data?.data ? bDetails.data.data : null
+          );
+          let bookingState = bDetails.data?.data?.booking?.state
+          if ((bookingState == 8 || bookingState == 10 || bookingState == 11) && (!(window.location.href.includes('/receipt')))) {
+            this.$router.replace({ path: "/checkout" });
+          } else if (bookingState == 2) {
+            this.$router.replace({ path: "/checkedin" });
+          } else if (bookingState == 0) {
+            this.$router.replace({ path: "/checkin" });
+          } else {
+            setTimeout(async () => {
+              await self.reEnter();
+            }, 4000);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    },
     async getBookingState(bookingId) {
       try {
         var bookingDetails = api.getBookingState(bookingId)
