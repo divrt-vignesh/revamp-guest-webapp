@@ -3,7 +3,7 @@
         <v-row no-gutters>
             <v-col cols="12">
                 <div class="parking-container">
-                   <slot></slot>
+                    <slot></slot>
                 </div>
             </v-col>
         </v-row>
@@ -14,8 +14,8 @@
     background-color: #3D4C56;
     width: 100%;
     height: 395px;
-    border-bottom-left-radius: 25%;
-    border-bottom-right-radius: 25%;
+    border-radius: 0 0 50% 50% / 50px;
+
 }
 
 .parking-values {

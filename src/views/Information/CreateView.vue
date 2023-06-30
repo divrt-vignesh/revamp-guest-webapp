@@ -20,7 +20,7 @@
                 </v-container>
             </div>
             <v-container fluid class="text-center px-10" elevation="20">
-                <v-card>
+                <v-card style="border-radius: 10px;">
                     <v-card-text>
                         <v-container>
                             <v-form>
