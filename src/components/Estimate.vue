@@ -1,18 +1,18 @@
 <template>
-    <v-container fluid>
+    <v-container fluid pa-0>
         <v-container pa-0 fluid v-if="singleQuotes">
             <v-row no-gutters v-if="estimate != null && Object.keys(estimate).length != 0
                 ">
                 <v-col cols="12" class=" text-center" style="font-size: 12px">
-                    <v-row no-gutters class="pt-2 px-3">
-                        <v-col cols="4" class="text-left">
-                            <p style="font-size: small" class="black--text">
+                    <v-row no-gutters >
+                        <v-col cols="6" class="text-left">
+                            <p style="font-size: small;color:#3D4C56" >
                                 Parking
                             </p>
                         </v-col>
                         <v-spacer></v-spacer>
-                        <v-col cols="4" class="text-left">
-                            <p style="font-size: small" class="black--text text-right">
+                        <v-col cols="6" class="text-left">
+                            <p style="font-size: small;color:#3D4C56" class=" text-right">
                                 {{
                                     estimate.hasOwnProperty("totalPrice")
                                     ? "$ " + estimate.totalPrice.toFixed(2)
@@ -21,11 +21,11 @@
                             </p>
                         </v-col>
                     </v-row>
-                    <v-row no-gutters class="mt-0 px-3">
-                        <v-col cols="4" class="text-left">
+                    <v-row no-gutters class="mt-0 ">
+                        <v-col cols="6" class="text-left">
                             <v-row no-gutters>
                                 <v-col cols="11">
-                                    <p style="font-size: small" class="black--text">
+                                    <p style="font-size: small;color:#3D4C56" >
                                         Service Fee
                                     </p>
                                 </v-col>
@@ -43,8 +43,8 @@
                             </v-row>
                         </v-col>
                         <v-spacer></v-spacer>
-                        <v-col cols="4" class="text-left">
-                            <p style="font-size: small" class="black--text text-right">
+                        <v-col cols="6" class="text-left">
+                            <p style="font-size: small;color:#3D4C56" class=" text-right">
                                 {{
                                     estimate.hasOwnProperty("totalFee")
                                     ? "$ " + estimate.totalFee.toFixed(2)
@@ -54,11 +54,11 @@
                         </v-col>
                     </v-row>
                     <hr />
-                    <v-row no-gutters class="mt-2 px-3">
+                    <v-row no-gutters class="mt-2 ">
                         <v-col cols="6" class="text-left">
                             <p style="
                                                                             font-weight: bold;
-                                                                            color: #f2555c;
+                                                                            color: #333D44;
                                                                             font-size: 15px;
                                                                           ">
                                 Purchase Total <sup>*</sup>
@@ -69,7 +69,7 @@
                             <p style="
                                                                             font-size: small;
                                                                             font-weight: bold;
-                                                                            color: #f2555c;
+                                                                            color: #333D44;
                                                                           " class="text-right">
                                 {{
                                     estimate.hasOwnProperty("grandTotal")
@@ -101,7 +101,7 @@
                 <v-col cols="6" class=" pr-3 text-center" style="font-size: 12px">
                     <v-row no-gutters class="pt-2">
                         <v-col cols="12">
-                            <p style="font-size: 15px;color: #1976d2; font-weight: bold;">BEFORE {{
+                            <p style="font-size: 11.5px;color: #1976d2; font-weight: bold;">BEFORE {{
                                 formattedEntryDisplayTime }}</p>
                         </v-col>
                     </v-row>
@@ -116,7 +116,7 @@
                     </v-row>
                     <v-row no-gutters class="pa-0">
                         <v-col class="text-left pl-2">
-                            <p style="font-size:small;font-weight: bold; color: #f2555c;">Price <sup>*</sup>
+                            <p style="font-size:small;font-weight: bold; color:#3D4C56">Price <sup>*</sup>
                             </p>
                         </v-col>
                     </v-row>
@@ -185,7 +185,7 @@
                 <v-col cols="6" class="pl-1 text-center" style="font-size: 12px">
                     <v-row no-gutters class="pt-2">
                         <v-col cols="12">
-                            <p style="font-size: 15px;color: #1976d2; font-weight: bold;">AFTER
+                            <p style="font-size: 11.5px;color: #1976d2; font-weight: bold;">AFTER
                                 {{ formattedEntryDisplayTime }}</p>
                         </v-col>
                     </v-row>

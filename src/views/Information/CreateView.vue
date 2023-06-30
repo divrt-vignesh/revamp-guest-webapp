@@ -1,11 +1,266 @@
 <template>
     <v-container fluid pa-0>
-        CICO
+        <v-dialog v-model="loading" persistent>
+            <v-card class="pa-4">
+                <v-progress-circular indeterminate color="red"></v-progress-circular>
+                <span class="ml-4" style="font-size: 14px">Please wait...</span>
+            </v-card>
+        </v-dialog>
+        <boiler-plate>
+            <div class="parking-values ">
+                <v-container pa-0 class="text-center">
+                    <v-row no-gutters class="location-values ">
+                        <v-col cols="12" class=" pb-0">
+                            <v-container pl-10>
+                                <p class="welcome text-start">Welcome to</p>
+                                <p class="location text-start">{{ zoneName }}</p>
+                            </v-container>
+                        </v-col>
+                    </v-row>
+                </v-container>
+            </div>
+            <v-container fluid class="text-center px-10" elevation="20">
+                <v-card>
+                    <v-card-text>
+                        <v-container>
+                            <v-form>
+                                <v-row no-gutters>
+                                    <v-col class="text-left mb-5">
+                                        <span style="font-weight: 700;font-size: 14px; ">Your Information</span>
+                                    </v-col>
+                                </v-row>
+                                <v-row no-gutters class="mb-5">
+                                    <v-col cols="12" v-if="!edtPhoneInput">
+                                        <VuePhoneNumberInput v-model="contactObj.phoneNumber" size="md"
+                                            @update="onContactInput" show-code-on-list
+                                            :default-country-code="contactOptions.defaultCountry"
+                                            :disabled="contactDisabled" :color="contactOptions.color"
+                                            :valid-color="contactOptions.validColor"
+                                            :error-color="contactOptions.errorColor"
+                                            :border-radius="contactOptions.contactBorderRadius" :error="!isContactValid"
+                                            required :translations="contactOptions.translations" />
+                                    </v-col>
+                                    <v-col cols="11" v-if="edtPhoneInput">
+                                        <v-text-field v-model="contactObj.phoneNumber" disabled oulined></v-text-field>
+                                    </v-col>
+                                    <v-col cols="1"> </v-col>
+                                    <v-col cols="11" v-if="!isPQREndReservation">
+                                        <span style="font-size: 10px; line-height: 1.5">Phone number is mandatory for
+                                            generating
+                                            the
+                                            receipt</span>
+                                    </v-col>
+                                </v-row>
+                                <v-row no-gutters class="mb-3">
+                                    <v-col>
+                                        <v-text-field class="pt-0" v-model="licencePlate" hide-details="auto" maxlength="8"
+                                            dense outlined :rules="[rules.alphaNumeric]" @keyup="uppercase"
+                                            label="License Plate *" clearable>
+
+                                        </v-text-field>
+                                    </v-col>
+                                </v-row>
+                                <v-row no-gutters>
+                                    <v-col cols="12" class="text-left pb-1" style="font-size: 10px;font-weight: 300;">
+                                        <p class="mb-0" v-if="zoneDetails.lpr_status == '1'">
+                                            Enter your license plate and phone number for hassle-free
+                                            parking
+                                        </p>
+                                        <p class="mb-0" v-else>
+                                            Enter your phone number for hassle-free parking
+                                        </p>
+                                    </v-col>
+
+                                </v-row>
+                                <v-row no-gutters v-if="isPQREndReservation">
+                                    <v-col cols="12">
+                                        <v-row no-gutters class=" text-left pa-0 mb-0">
+                                            <v-col cols="12">
+                                                <p style="font-weight: 700;color: #3D4C56;margin-bottom: 3px;">
+                                                    Set Your Exit Date <span
+                                                        v-if="isPQREndReservation && Object.hasOwnProperty.call(zoneDetails, 'timePickerConfiguration') && zoneDetails.timePickerConfiguration == '1'">and
+                                                        Time</span>
+                                                </p>
+                                                <p class="text-left ma-0"
+                                                    style="color: #6F6F6F;font-size: 10px; font-weight: 300; "
+                                                    v-if="isPQREndReservation">
+                                                    If you're a hotel guest, this is your checkout date.
+                                                </p>
+                                            </v-col>
+                                        </v-row>
+                                        <v-row no-gutters>
+                                            <v-col cols="12" class=" text-center color-black" style="font-size: 12px">
+
+                                                <v-row no-gutters class="py-2">
+
+                                                    <v-col cols="12">
+                                                        <v-text-field v-model="computedDateFormatted" outlined dense
+                                                            class="date-text" @click="() => { openDatePicker = true }"
+                                                            hide-details="auto" readonly>
+                                                            <template v-slot:prepend-inner>
+                                                                <v-icon class="material-icons-outlined"
+                                                                    color="#3D4C56">calendar_today</v-icon>
+                                                                <v-divider color="grey" vertical
+                                                                    class="ml-3 mr-3"></v-divider>
+                                                            </template>
+                                                        </v-text-field>
+                                                        <v-dialog v-model="openDatePicker" max-width="450px">
+                                                            <v-card
+                                                                style="background-color: #F2555C;color: white;"><v-card-title>
+                                                                    <v-row no-gutters>
+                                                                        <v-col class="text-left" cols="12">
+                                                                            <span style="font-size:15px;color: #fabbbe;">{{
+                                                                                time
+                                                                                !== null && time !== "" ?
+                                                                                formattedYear : "" }}</span>
+                                                                        </v-col>
+                                                                        <v-col>
+                                                                            <span style="font-size:30px"> {{ time !== null
+                                                                                &&
+                                                                                time !== "" ? formattedDateTime :
+                                                                                ""
+                                                                            }}</span>
+                                                                        </v-col>
+                                                                    </v-row>
+                                                                </v-card-title></v-card>
+                                                            <Calendar inline class="text-left" value :stepMinute="15"
+                                                                hourFormat="12" :minDate="minTimeDate"
+                                                                @date-select="onTimePickerChange" :maxDate="maxTimeDate"
+                                                                v-model="time" />
+                                                        </v-dialog>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row no-gutters class="pt-2"
+                                                    v-if="Object.hasOwnProperty.call(zoneDetails, 'timePickerConfiguration') && zoneDetails.timePickerConfiguration == '1'">
+                                                    <v-col cols="12">
+                                                        <v-row no-gutters class="pb-0">
+                                                            <v-col class="pb-0">
+                                                                <v-text-field class="date-text" v-model="formattedTime"
+                                                                    dense outlined @click="() => {
+                                                                        openTimePicker = true;
+                                                                    }" readonly>
+                                                                    <template v-slot:prepend-inner>
+                                                                        <v-icon class="material-icons-outlined"
+                                                                            color="#3D4C56">schedule</v-icon>
+                                                                        <v-divider color="grey" vertical
+                                                                            class="ml-3 mr-3"></v-divider>
+                                                                    </template>
+                                                                </v-text-field>
+                                                                <v-dialog v-model="openTimePicker" max-width="300px"
+                                                                    @click:outside="() => { setDefaultDate(); onTimePickerChange() }">
+                                                                    <v-card
+                                                                        style="background-color: #F2555C;color: white;"><v-card-title>What
+                                                                            time will you
+                                                                            exit?</v-card-title></v-card>
+                                                                    <Calendar inline time-only show-time class="text-left "
+                                                                        value :stepMinute="15" hourFormat="12"
+                                                                        :minDate="minTimeDate" :maxDate="maxTimeDate"
+                                                                        v-model="time" />
+                                                                </v-dialog>
+                                                            </v-col>
+                                                        </v-row>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row class="text-left mt-0  py-0 pb-3">
+                                                    <v-col class="pt-0">
+                                                        <p style="
+                                                    font-size: 10px; 
+                                                    font-weight: 700;
+                              color: #3D4C56;
+                              line-height: 13px;
+                            " class="ma-0">
+                                                            HOURS OF OPERATION
+                                                        </p>
+                                                        <p class="ma-0" style="font-size: 9px; ">
+                                                            Today :
+                                                            {{
+                                                                onDemandZoneDetails.hasOwnProperty(
+                                                                    "todaysHoursOfOperation"
+                                                                ) &&
+                                                                onDemandZoneDetails.todaysHoursOfOperation.hasOwnProperty(
+                                                                    "is24HourOpen"
+                                                                ) &&
+                                                                onDemandZoneDetails.todaysHoursOfOperation
+                                                                    .is24HourOpen == true
+                                                                ? "Open 24 / 7"
+                                                                : ""
+                                                            }}
+                                                        </p>
+                                                    </v-col>
+                                                </v-row>
+                                            </v-col>
+                                        </v-row>
+                                        <v-row no-gutters class=" information pa-0" v-if="estimate != null && Object.keys(estimate).length != 0
+                                                ">
+                                            <v-col cols="10" class="text-left">
+                                                <p style="color: #3D4C56; font-weight: bolder">
+                                                    Your Parking Fees
+                                                </p>
+                                            </v-col>
+                                        </v-row>
+
+                                        <Estimate :singleQuotes="singleQuotes" :doubleQuotes="doubleQuotes"
+                                            :estimate="estimate" :beforeEstimate="beforeEstimate"
+                                            :formattedEntryDisplayTime="formattedEntryDisplayTime"></Estimate>
+                                    </v-col>
+                                </v-row>
+                            </v-form>
+                        </v-container>
+                        <v-card-actions class="">
+                        <v-container class="pa-0 text-center" v-if="isPQREndReservation">
+                            <v-row no-gutters>
+                                <v-col cols="12" >
+                                    <v-btn   class="add_licence_plate_btn" width="100%"
+                                        :disabled="disableSubmitBtn" :loading="addPaymentBtnLoading" @click="addPayment">Add
+                                        Payment</v-btn>
+                                </v-col>
+                            </v-row>
+                            <v-row no-gutters>
+                                <v-col cols="12" class="px-2 mt-4">
+                                    <v-btn rounded elevation="20" width="50%" class="white--text" color="primary"
+                                        v-if="this.casinoDetails.userDetail.bid" @click="reloadBooking">Cancel</v-btn>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                        <v-container class="pa-0" fluid v-else>
+                            <v-row no-gutters>
+                                <v-col cols="12" class="px-2">
+                                    <v-btn rounded elevation="20" class="add_licence_plate_btn white--text"
+                                        :loading="addLicencePlateBtnLoading" :disabled="disableAddLicencePlateBtn"
+                                        @click="createSession()">{{
+                                            reEnterPlate ? "Confirm" : "Continue" }}</v-btn>
+                                </v-col>
+                            </v-row>
+                            <v-row no-gutters>
+                                <v-col cols="12" class="mt-2 text-center color-black px-2" style="font-size: 12px">
+                                    <p class="mb-0" v-show="reEnterPlate">
+                                        Please provide correct license plate and phone number.
+                                        Without one, you could be subject to a parking violation and
+                                        issued a citation.
+                                    </p>
+                                    <p class="mb-0">
+                                        A valid credit card is required to park. Without one, you
+                                        could be subject to a parking violation and issued a
+                                        citation.
+                                    </p>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-card-actions>
+                    </v-card-text>
+                    
+                </v-card>
+            </v-container>
+
+        </boiler-plate>
+
     </v-container>
 </template>
 <script>
 // import Vue from "vue";
-// import Estimate from '../components/Estimate.vue'
+import Estimate from '@/components/Estimate.vue';
+import API from '@/api';
+import Calendar from '@/uiComponents/Calendar/Calendar.vue'
 import { EventBus } from "@/lib/EventBus";
 import { mapGetters } from "vuex";
 import { addMinutes, addDays, addHours } from "date-fns";
@@ -17,7 +272,7 @@ import { dateToTimeZoneDate } from "@/utils/formatDateTime";
 // import axios from "axios";
 
 import APIHelper from "@/api";
-// import VuePhoneNumberInput from "vue-phone-number-input";
+import VuePhoneNumberInput from "vue-phone-number-input";
 import "vue-phone-number-input/dist/vue-phone-number-input.css";
 // import moment from "moment";
 // Vue.use(moment);
@@ -78,20 +333,20 @@ export default {
         },
         addPaymentBtnLoading: false,
     }),
-    // components: {
-    //     VuePhoneNumberInput, Calendar, Estimate
-    // },
+    components: {
+        VuePhoneNumberInput,
+        Calendar, Estimate
+    },
     beforeRouteEnter(to, from, next) {
         next(async (vm) => {
-            let searchParams = window.location.search.split("=");
-            let searchParamKey = searchParams.length > 0 ? searchParams[0] : "";
-            let searchParamValue = searchParams.length > 0 ? searchParams[1] : "";
+            const params = new URLSearchParams(window.location.search)
+            let searchParamKey = params.has('zcode') !== null ? '?zcode' : params.has('gateId') !== null ? '?gateId' : "";
+            let searchParamValue = params.has('zcode') !== null ? params.get('zcode') : params.has('gateId') !== null ? params.get('gateId') : "";
             switch (searchParamKey) {
                 case "?zcode":
                     await vm.getZoneDetails(searchParamKey, searchParamValue);
                     if (vm.isPQREndReservation) {
                         await vm.getOnDemandZoneDetails(searchParamValue);
-                        vm.setDefaultDate();
                     }
                     break;
                 case "?gateid":
@@ -172,6 +427,13 @@ export default {
         },
     },
     computed: {
+        zoneName() {
+            return this.isPQREndReservation ? this.onDemandZoneDetails?.name
+                ? this.onDemandZoneDetails?.name
+                : "" : this.zoneDetails?.zoneName
+                ? this.zoneDetails?.zoneName
+                : ""
+        },
         formattedDateTime() {
             return this.time !== null && this.time !== undefined && this.time !== "" ? format(this.time, 'iii, LLL dd') : ""
         },
@@ -189,10 +451,10 @@ export default {
             isPQREndReservation: "getterZoneIsPQREndReservation",
         }),
         singleQuotes() {
-            return Object.hasOwnProperty.call(this.zoneDetails, 'timePickerConfiguration') && this.zoneDetails.timePickerConfiguration == "0" ? (format(this.time, 'yyyy-MM-dd') == this.currentDate || (this.beforeEstimate !== null && this.beforeEstimate !== undefined && this.beforeEstimate !== "" && this.estimate !== null && this.estimate !== undefined && this.estimate !== "" && this.beforeEstimate.grandTotal == this.estimate.grandTotal)) : true
+            return this.time!==null && this.time !== undefined && this.time!=="" && Object.hasOwnProperty.call(this.zoneDetails, 'timePickerConfiguration') && this.zoneDetails.timePickerConfiguration == "0" ? (format(this.time, 'yyyy-MM-dd') == this.currentDate || (this.beforeEstimate !== null && this.beforeEstimate !== undefined && this.beforeEstimate !== "" && this.estimate !== null && this.estimate !== undefined && this.estimate !== "" && this.beforeEstimate.grandTotal == this.estimate.grandTotal)) : true
         },
         doubleQuotes() {
-            return Object.hasOwnProperty.call(this.zoneDetails, 'timePickerConfiguration') && this.zoneDetails.timePickerConfiguration == "0" ? (format(this.time, 'yyyy-MM-dd') != this.currentDate && (this.beforeEstimate !== null && this.beforeEstimate !== undefined && this.beforeEstimate !== "" && this.estimate !== null && this.estimate !== undefined && this.estimate !== "" && this.beforeEstimate.grandTotal != this.estimate.grandTotal)) : false
+            return this.time!==null && this.time !== undefined && this.time!=="" && Object.hasOwnProperty.call(this.zoneDetails, 'timePickerConfiguration') && this.zoneDetails.timePickerConfiguration == "0" ? (format(this.time, 'yyyy-MM-dd') != this.currentDate && (this.beforeEstimate !== null && this.beforeEstimate !== undefined && this.beforeEstimate !== "" && this.estimate !== null && this.estimate !== undefined && this.estimate !== "" && this.beforeEstimate.grandTotal != this.estimate.grandTotal)) : false
         },
         formattedEntryDisplayTime() {
             return this.casinoDetails.userDetail.entrytime !== null && this.casinoDetails.userDetail.entrytime !== undefined && this.casinoDetails.userDetail.entrytime !== "" ? format((new Date(this.casinoDetails.userDetail.entrytime)), 'hh:mm a') : format(dateToTimeZoneDate(new Date(), this.zoneDetails.timezone), 'hh:mm a');
@@ -277,7 +539,7 @@ export default {
         EventBus.$on('SET_TIME', () => {
             this.onTimePickerChange();
         })
-        this.setDefaultDate();
+        // this.setDefaultDate();
     },
     methods: {
         round(time) {
@@ -458,7 +720,7 @@ export default {
                     zcode: this.zoneDetails.zcode,
                 };
                 this.addPaymentBtnLoading = true;
-                var getRate = await APIHelper("POST", "/api/v2/getRate", data);
+                var getRate = await API.getRate(data);
                 //condition to check if the date time selected is lesser than current time
                 if (!getRate?.data?.status && !this.getRateCall) {
                     this.disableAddPaymentBtn = true;
@@ -527,7 +789,7 @@ export default {
                     zcode: this.zoneDetails.zcode,
                 };
                 this.addPaymentBtnLoading = true;
-                var getRate = await APIHelper("POST", "/api/v2/getRate", data);
+                var getRate = await API.getRate(data);
                 //condition to check if the date time selected is lesser than current time
                 if (!getRate?.data?.status && !this.getRateCall) {
                     this.disableAddPaymentBtn = true;
@@ -638,11 +900,8 @@ export default {
          */
         async getZoneDetails(searchParamKey, searchParamValue) {
             try {
-                var zoneDetails = await APIHelper(
-                    "GET",
-                    "/api/v1/user/config" + searchParamKey + "=" + searchParamValue
-                );
-                this.$store.commit("SET_ZONE_DETAILS", zoneDetails.data?.zone);
+                var zoneDetails = await API.getZoneDetails(searchParamKey, searchParamValue)
+                this.$store.commit("SET_ZONE_DETAILS", zoneDetails?.data?.zone);
             } catch (error) {
                 console.log(error);
             }
@@ -653,10 +912,8 @@ export default {
         async getOnDemandZoneDetails(searchParamValue) {
             this.loading = true;
             try {
-                var zoneDetails = await APIHelper(
-                    "GET",
-                    "/api/v1/getOnDemand/" + searchParamValue
-                );
+                var zoneDetails = await API.getOnDemandZoneDetails(searchParamValue);
+                this.setDefaultDate();
                 this.loading = false;
                 if (zoneDetails.data?.lot) {
                     this.$store.commit(
@@ -785,4 +1042,8 @@ export default {
     },
 };
 </script>
-	
+<style scoped>
+.date-text {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+}</style>

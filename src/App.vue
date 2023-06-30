@@ -24,6 +24,7 @@ export default {
     ...mapGetters({
       buildMode: "getterBuildMode",
       bookingDetails: "getterBookingDetails",
+      zoneDetails: "getterZoneDetails",
     }),
     prepaidExit() {
       return this.bookingDetails.booking?.type == 13 && this.checkReservationEndDate
@@ -50,9 +51,23 @@ export default {
     });
   },
   async created() {
-    const params = new URLSearchParams(window.location.search)
-
     var self = this;
+
+    const params = new URLSearchParams(window.location.search)
+    let searchParamKey = params.has('zcode') !== null ? '?zcode' : params.has('gateId') !== null ? '?gateId' : "";
+    let searchParamValue = params.has('zcode') !== null ? params.get('zcode') : params.has('gateId') !== null ? params.get('gateId') : "";
+    switch (searchParamKey) {
+      case "?zcode":
+        await self.getZoneDetails(searchParamKey, searchParamValue);
+        if (self.isPQREndReservation) {
+          await self.getOnDemandZoneDetails(searchParamValue);
+          self.setDefaultDate();
+        }
+        break;
+      case "?gateid":
+        //await self.getZoneDetails(searchParamKey, searchParamValue);
+        break;
+    }
     if (
       window.location.search.includes("zcode") &&
       (window.location.href.includes("createreservation"))
@@ -61,14 +76,14 @@ export default {
     } else if (window.location.href.includes("successreservation")) {
       self.$router.replace({ path: "createreservation" });
     } else if (window.location.href.includes("confirmreservation")) {
-      self.$router.push({ name: 'hostpass', query: { zcode: '99999', sessiontype: 'hostpass' } });
+      self.$router.push({ name: 'hostpass', query: { zcode: params.get('zcode'), sessiontype: 'hostpass' } });
       return
     } else if (
       window.location.search.includes("zcode") &&
       window.location.href.includes("ondemand")
     ) {
       self.$store.commit('SET_TEMPLATE_FLAGS', 'ondemand-flag')
-      self.$router.push({ name: 'ondemand', query: { zcode: '99999', sessiontype: 'ondemand' } });
+      self.$router.push({ name: 'ondemand', query: { zcode: params.get('zcode'), sessiontype: 'ondemand' } });
       return;
     }
     else if ((window.location.search.includes("zcode") ||
@@ -79,7 +94,7 @@ export default {
       (window.location.search.includes("zcode") ||
         window.location.search.includes("gateid"))
     ) {
-      self.$router.push({ name: 'cico', query: { zcode: '99999', sessiontype: 'cico' } });
+      self.$router.push({ name: 'cico', query: { zcode: params.get('zcode'), sessiontype: 'cico' } });
       return;
     }
     else if (window.location.search.includes("bid")) {
@@ -153,6 +168,41 @@ export default {
     }
   },
   methods: {
+    /**
+       * @method getZoneDetails fetch the zone details and commit SET_ZONE_DETAILS mutation.
+       */
+    async getZoneDetails(searchParamKey, searchParamValue) {
+      console.log('here')
+      try {
+        var zoneDetails = await API.getZoneDetails(searchParamKey, searchParamValue)
+        this.$store.commit("SET_ZONE_DETAILS", zoneDetails?.data?.zone);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    /**
+         * @method getOnDemandZoneDetails fetch the ondemand zone details from Pcom and commit SET_ZONE_DETAILS mutation.
+         */
+    async getOnDemandZoneDetails(searchParamValue) {
+      this.loading = true;
+      try {
+        var zoneDetails = await API.getOnDemandZoneDetails(searchParamValue);
+        this.loading = false;
+        if (zoneDetails.data?.lot) {
+          this.$store.commit(
+            "SET_ON_DEMAND_ZONE_DETAILS",
+            zoneDetails.data?.lot
+          );
+        } else {
+          this.alertMsg =
+            zoneDetails?.data?.message || "Error in loading location details.";
+          this.alertDialog = true;
+        }
+      } catch (error) {
+        this.loading = false;
+        console.log(error);
+      }
+    },
     async reEnter(bookingId) {
       if (bookingId != null) {
         try {
@@ -205,3 +255,67 @@ export default {
 };
 
 </script>
+<style lang="less">
+.v-application {
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: 100% 100% !important;
+}
+
+input {}
+
+.v-input input {
+  max-height: none !important;
+}
+
+.fit-height {
+  height: 100%;
+}
+
+
+
+.fit-width {
+  width: 100%;
+}
+
+.color-black {
+  color: #44515a;
+}
+
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 1s, transform 1s;
+}
+
+.page-enter,
+.page-leave-to {
+  opacity: 0;
+  transform: translateX(-30%);
+}
+
+.zoom-enter-active,
+.zoom-leave-active {
+  animation-duration: 0.5s;
+  animation-fill-mode: both;
+  animation-name: zoom;
+}
+
+.zoom-leave-active {
+  animation-direction: reverse;
+}
+
+.add_licence_plate_btn {
+  border-radius: 7px;
+  background-color: #FDAE33 !important;
+}
+
+@keyframes zoom {
+  from {
+    opacity: 0;
+    transform: scale3d(0.3, 0.3, 0.3);
+  }
+
+  100% {
+    opacity: 1;
+  }
+}</style>

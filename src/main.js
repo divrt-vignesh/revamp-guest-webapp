@@ -11,14 +11,14 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 // import loggerMixin from './mixins/loggerMixin';
 import PrimeVue from 'primevue/config';
 import { library } from '@fortawesome/fontawesome-svg-core'
-
+import BoilerPlate from '@/components/BoilerPlate.vue'
 /* import specific icons */
 import { faHotel } from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
 library.add(faHotel)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
-
+Vue.component('boiler-plate',BoilerPlate)
 Vue.use(PrimeVue);
 Vue.config.productionTip = false
 /** DIVRT UI Components and mixins */
