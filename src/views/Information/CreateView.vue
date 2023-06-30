@@ -207,52 +207,51 @@
                             </v-form>
                         </v-container>
                         <v-card-actions class="">
-                        <v-container class="pa-0 text-center" v-if="isPQREndReservation">
-                            <v-row no-gutters>
-                                <v-col cols="12" >
-                                    <v-btn   class="add_licence_plate_btn" width="100%"
-                                        :disabled="disableSubmitBtn" :loading="addPaymentBtnLoading" @click="addPayment">Add
-                                        Payment</v-btn>
-                                </v-col>
-                            </v-row>
-                            <v-row no-gutters>
-                                <v-col cols="12" class="px-2 mt-4">
-                                    <v-btn rounded elevation="20" width="50%" class="white--text" color="primary"
-                                        v-if="this.casinoDetails.userDetail.bid" @click="reloadBooking">Cancel</v-btn>
-                                </v-col>
-                            </v-row>
-                        </v-container>
-                        <v-container class="pa-0" fluid v-else>
-                            <v-row no-gutters>
-                                <v-col cols="12" class="px-2">
-                                    <v-btn rounded elevation="20" class="add_licence_plate_btn white--text"
-                                        :loading="addLicencePlateBtnLoading" :disabled="disableAddLicencePlateBtn"
-                                        @click="createSession()">{{
-                                            reEnterPlate ? "Confirm" : "Continue" }}</v-btn>
-                                </v-col>
-                            </v-row>
-                            <v-row no-gutters>
-                                <v-col cols="12" class="mt-2 text-center color-black px-2" style="font-size: 12px">
-                                    <p class="mb-0" v-show="reEnterPlate">
-                                        Please provide correct license plate and phone number.
-                                        Without one, you could be subject to a parking violation and
-                                        issued a citation.
-                                    </p>
-                                    <p class="mb-0">
-                                        A valid credit card is required to park. Without one, you
-                                        could be subject to a parking violation and issued a
-                                        citation.
-                                    </p>
-                                </v-col>
-                            </v-row>
-                        </v-container>
-                    </v-card-actions>
+                            <v-container class="pa-0 text-center" v-if="isPQREndReservation">
+                                <v-row no-gutters>
+                                    <v-col cols="12">
+                                        <v-btn class="add_licence_plate_btn" width="100%" :disabled="disableSubmitBtn"
+                                            :loading="addPaymentBtnLoading" @click="addPayment">Add
+                                            Payment</v-btn>
+                                    </v-col>
+                                </v-row>
+                                <v-row no-gutters>
+                                    <v-col cols="12" class="px-2 mt-4">
+                                        <v-btn rounded elevation="20" width="50%" class="white--text" color="primary"
+                                            v-if="this.casinoDetails.userDetail.bid" @click="reloadBooking">Cancel</v-btn>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+                            <v-container class="pa-0" fluid v-else>
+                                <v-row no-gutters>
+                                    <v-col cols="12" class="px-2">
+                                        <v-btn rounded elevation="20" class="add_licence_plate_btn white--text"
+                                            :loading="addLicencePlateBtnLoading" :disabled="disableAddLicencePlateBtn"
+                                            @click="createSession()">{{
+                                                reEnterPlate ? "Confirm" : "Continue" }}</v-btn>
+                                    </v-col>
+                                </v-row>
+                                <v-row no-gutters>
+                                    <v-col cols="12" class="mt-2 text-center color-black px-2" style="font-size: 12px">
+                                        <p class="mb-0" v-show="reEnterPlate">
+                                            Please provide correct license plate and phone number.
+                                            Without one, you could be subject to a parking violation and
+                                            issued a citation.
+                                        </p>
+                                        <p class="mb-0">
+                                            A valid credit card is required to park. Without one, you
+                                            could be subject to a parking violation and issued a
+                                            citation.
+                                        </p>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+                        </v-card-actions>
                     </v-card-text>
-                    
+
                 </v-card>
             </v-container>
-
-        </boiler-plate>
+</boiler-plate>
 
     </v-container>
 </template>
@@ -451,10 +450,10 @@ export default {
             isPQREndReservation: "getterZoneIsPQREndReservation",
         }),
         singleQuotes() {
-            return this.time!==null && this.time !== undefined && this.time!=="" && Object.hasOwnProperty.call(this.zoneDetails, 'timePickerConfiguration') && this.zoneDetails.timePickerConfiguration == "0" ? (format(this.time, 'yyyy-MM-dd') == this.currentDate || (this.beforeEstimate !== null && this.beforeEstimate !== undefined && this.beforeEstimate !== "" && this.estimate !== null && this.estimate !== undefined && this.estimate !== "" && this.beforeEstimate.grandTotal == this.estimate.grandTotal)) : true
+            return this.time !== null && this.time !== undefined && this.time !== "" && Object.hasOwnProperty.call(this.zoneDetails, 'timePickerConfiguration') && this.zoneDetails.timePickerConfiguration == "0" ? (format(this.time, 'yyyy-MM-dd') == this.currentDate || (this.beforeEstimate !== null && this.beforeEstimate !== undefined && this.beforeEstimate !== "" && this.estimate !== null && this.estimate !== undefined && this.estimate !== "" && this.beforeEstimate.grandTotal == this.estimate.grandTotal)) : true
         },
         doubleQuotes() {
-            return this.time!==null && this.time !== undefined && this.time!=="" && Object.hasOwnProperty.call(this.zoneDetails, 'timePickerConfiguration') && this.zoneDetails.timePickerConfiguration == "0" ? (format(this.time, 'yyyy-MM-dd') != this.currentDate && (this.beforeEstimate !== null && this.beforeEstimate !== undefined && this.beforeEstimate !== "" && this.estimate !== null && this.estimate !== undefined && this.estimate !== "" && this.beforeEstimate.grandTotal != this.estimate.grandTotal)) : false
+            return this.time !== null && this.time !== undefined && this.time !== "" && Object.hasOwnProperty.call(this.zoneDetails, 'timePickerConfiguration') && this.zoneDetails.timePickerConfiguration == "0" ? (format(this.time, 'yyyy-MM-dd') != this.currentDate && (this.beforeEstimate !== null && this.beforeEstimate !== undefined && this.beforeEstimate !== "" && this.estimate !== null && this.estimate !== undefined && this.estimate !== "" && this.beforeEstimate.grandTotal != this.estimate.grandTotal)) : false
         },
         formattedEntryDisplayTime() {
             return this.casinoDetails.userDetail.entrytime !== null && this.casinoDetails.userDetail.entrytime !== undefined && this.casinoDetails.userDetail.entrytime !== "" ? format((new Date(this.casinoDetails.userDetail.entrytime)), 'hh:mm a') : format(dateToTimeZoneDate(new Date(), this.zoneDetails.timezone), 'hh:mm a');
@@ -1046,4 +1045,5 @@ export default {
 .date-text {
     font-size: 15px !important;
     font-weight: 700 !important;
-}</style>
+}
+</style>

@@ -7,7 +7,10 @@
                 </div>
             </v-col>
         </v-row>
+
+        
     </v-container>
+    
 </template>
 <style>
 .parking-container {
@@ -16,6 +19,11 @@
     height: 395px;
     border-radius: 0 0 50% 50% / 50px;
 
+}
+
+.parking.com {
+    position: fixed !important;
+    bottom: 0 !important;
 }
 
 .parking-values {

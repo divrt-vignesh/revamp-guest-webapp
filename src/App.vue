@@ -1,6 +1,6 @@
 <template>
-  <v-app>
-    <v-main>
+  <v-app >
+    <v-main >
       <v-system-bar absolute dark color="red" v-if="buildMode == 'dev'" class="justify-space-between"><span>version : {{
         version
       }}</span><span>build : development</span></v-system-bar>
@@ -8,6 +8,13 @@
         <router-view></router-view>
       </transition>
     </v-main>
+    <footer>
+      <v-row class="text-center parking.com pb-3" no-gutters>
+        <v-col cols="12">
+          <v-img alt="PARKING.COM" class="my-3" height="42" contain src="@/assets/logo_huge_drk.png" />
+        </v-col>
+      </v-row>
+    </footer>
   </v-app>
 </template>
 
@@ -318,4 +325,5 @@ input {}
   100% {
     opacity: 1;
   }
-}</style>
+}
+</style>
