@@ -24,6 +24,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/vue-fontawesome": "^2.0.10",
     "axios": "^0.21.0",
+    "color-transformer-ui": "^1.0.3",
     "core-js": "^3.6.5",
     "date-fns": "^2.19.0",
     "date-fns-tz": "^1.1.4",

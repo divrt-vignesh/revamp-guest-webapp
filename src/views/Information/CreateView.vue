@@ -31,14 +31,15 @@
                                 </v-row>
                                 <v-row no-gutters class="mb-5">
                                     <v-col cols="12" v-if="!edtPhoneInput">
-                                        <VuePhoneNumberInput v-model="contactObj.phoneNumber" size="md"
+                                        <sphere-phone-number-input v-model="contactObj.phoneNumber" size="md"
                                             @update="onContactInput" show-code-on-list
                                             :default-country-code="contactOptions.defaultCountry"
                                             :disabled="contactDisabled" :color="contactOptions.color"
                                             :valid-color="contactOptions.validColor"
                                             :error-color="contactOptions.errorColor"
                                             :border-radius="contactOptions.contactBorderRadius" :error="!isContactValid"
-                                            required :translations="contactOptions.translations" />
+                                            required
+                                            :translations="contactOptions.translations"></sphere-phone-number-input>
                                     </v-col>
                                     <v-col cols="11" v-if="edtPhoneInput">
                                         <v-text-field v-model="contactObj.phoneNumber" disabled oulined></v-text-field>
@@ -251,7 +252,14 @@
 
                 </v-card>
             </v-container>
-</boiler-plate>
+            <footer>
+                <v-row class="text-center parking.com pb-3" no-gutters>
+                    <v-col cols="12">
+                        <v-img alt="PARKING.COM" class="my-3" height="42" contain src="@/assets/logo_huge_drk.png" />
+                    </v-col>
+                </v-row>
+            </footer>
+        </boiler-plate>
 
     </v-container>
 </template>
@@ -269,10 +277,12 @@ import "primevue/resources/primevue.min.css"                 //core css
 import "primeicons/primeicons.css"                           //icons
 import { dateToTimeZoneDate } from "@/utils/formatDateTime";
 // import axios from "axios";
+import SpherePhoneNumberInput from '@/uiComponents/SpherePhoneNumberInput/VuePhoneNumberInput'
+
 
 import APIHelper from "@/api";
-import VuePhoneNumberInput from "vue-phone-number-input";
-import "vue-phone-number-input/dist/vue-phone-number-input.css";
+// import VuePhoneNumberInput from "vue-phone-number-input";
+// import "vue-phone-number-input/dist/vue-phone-number-input.css";
 // import moment from "moment";
 // Vue.use(moment);
 import rules from "@/utils/rules";
@@ -333,8 +343,8 @@ export default {
         addPaymentBtnLoading: false,
     }),
     components: {
-        VuePhoneNumberInput,
-        Calendar, Estimate
+        // VuePhoneNumberInput,
+        Calendar, Estimate, SpherePhoneNumberInput
     },
     beforeRouteEnter(to, from, next) {
         next(async (vm) => {
@@ -1045,5 +1055,4 @@ export default {
 .date-text {
     font-size: 15px !important;
     font-weight: 700 !important;
-}
-</style>
+}</style>
