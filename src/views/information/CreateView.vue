@@ -858,7 +858,7 @@ export default {
                 exitTime: exitDateTime,
                 estimate: this.estimate,
             };
-            let details = await APIHelper("POST", "/api/v1/prepaid/openTransaction", {
+            let details = await API.prepaidOpenTransaction({
                 vehicleNo: this.licencePlate,
                 contact: this.contactObj?.formattedNumber,
                 exitTime: exitDateTime, zcode: this.zoneDetails?.zcode,
@@ -868,7 +868,7 @@ export default {
 
             if (details?.data?.status) {
                 this.$store.commit("SET_CASINO_USERDETAILS", commitData);
-                this.$router.replace({ path: "/prepaidhost/makepayment" });
+                this.$router.push({ name: 'makepayment', query: { zcode: this.zoneDetails?.zcode, state: 'makepayment' } });
             } else {
                 if (details?.data?.message == "Booking Already Exists") {
                     let commitData = {
@@ -1055,4 +1055,5 @@ export default {
 .date-text {
     font-size: 15px !important;
     font-weight: 700 !important;
-}</style>
+}
+</style>

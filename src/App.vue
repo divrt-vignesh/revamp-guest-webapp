@@ -172,7 +172,6 @@ export default {
        * @method getZoneDetails fetch the zone details and commit SET_ZONE_DETAILS mutation.
        */
     async getZoneDetails(searchParamKey, searchParamValue) {
-      console.log('here')
       try {
         var zoneDetails = await API.getZoneDetails(searchParamKey, searchParamValue)
         this.$store.commit("SET_ZONE_DETAILS", zoneDetails?.data?.zone);

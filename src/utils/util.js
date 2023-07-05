@@ -84,5 +84,19 @@ const uppercase = (licencePlate) => {
     }
     licencePlate = licencePlate.trim()
     licencePlate = licencePlate.toUpperCase();
+    return licencePlate
 }
-export { convertToDecimal, minTwoDigits, isKeyDataEmpty, genPass, formatExitDateTime, round, uppercase }
+const getPaymentType = (type) => {
+    switch (type) {
+        case 'APPLE_PAY': {
+            return 'Apple Pay';
+        }
+        case 'GOOGLE_PAY': {
+            return 'Google Pay'
+        }
+        case 'Card': {
+            return 'Card'
+        }
+    }
+}
+export { convertToDecimal, minTwoDigits, isKeyDataEmpty, genPass, formatExitDateTime, round, uppercase, getPaymentType }

@@ -14,85 +14,89 @@ const routes = [
   {
     path: '/',
     name: 'nothing',
-    component: () => import('@/views/Information/NothingView.vue')
+    component: () => import('@/views/information/NothingView.vue')
   },
   {
     path: '/',
     name: 'cico',
-    component: () => import("../views/Information/CreateView.vue"),
+    component: () => import("../views/information/CreateView.vue"),
   },
   {
     path: '/',
     name: 'ondemand',
-    component: () => import("../views/Information/OndemandView.vue"),
+    component: () => import("../views/information/OndemandView.vue"),
   },
   {
     path: '/',
     name: 'hostpass',
-    component: () => import("../views/Information/CreateHostPassView.vue"),
+    component: () => import("../views/information/CreateHostPassView.vue"),
   },
   {
     path: '/',
     name: 'p2p',
-    component: () => import('@/views/Information/P2PPaymentView.vue')
+    component: () => import('@/views/information/P2PPaymentView.vue')
   },
 
   {
     path: '/',
     name: 'checkedin',
-    component: () => import('@/views/States/CheckedIn.vue')
+    component: () => import('@/views/session/CheckedIn.vue')
   },
   {
     path: '/',
     name: 'checkout',
-    component: () => import('@/views/States/ThankYou.vue')
+    component: () => import('@/views/session/ThankYou.vue')
   },
   {
     path: '/',
     name: 'checkin',
-    component: () => import('@/views/States/CheckIn.vue')
+    component: () => import('@/views/session/CheckIn.vue')
   },
   {
     path: '/',
     name: 'cancelled',
-    component: () => import('@/views/States/CancelledBooking.vue')
+    component: () => import('@/views/session/CancelledBooking.vue')
   },
   {
     path: '/',
     name: 'expired',
-    component: () => import('@/views/States/Expired.vue')
+    component: () => import('@/views/session/Expired.vue')
   },
   {
     path: '/',
     name: 'odExtension',
-    component: () => import('@/views/States/OdExtension.vue')
+    component: () => import('@/views/session/OdExtension.vue')
   },
   {
     path: '/',
     name: 'success',
-    component: () => import('@/views/LoadingStates/CheckinSuccess.vue')
+    component: () => import('@/views/loadingstates/CheckinSuccess.vue')
   },
   {
     path: '/',
     name: 'receipt',
-    component: () => import('@/views/LoadingStates/Receipt.vue')
+    component: () => import('@/views/loadingstates/Receipt.vue')
   },
   {
     path: '/',
     name: 'pedestrianaccess',
-    component: () => import('@/views/LoadingStates/PedestrianAccess.vue')
+    component: () => import('@/views/loadingstates/PedestrianAccess.vue')
   },
   {
     path: '/',
     name: 'loadsession',
-    component: () => import('@/views/LoadingStates/LoadSession.vue')
+    component: () => import('@/views/loadingstates/LoadSession.vue')
   },
   {
     path: '/',
     name: 'invalidbooking',
-    component: () => import('@/views/States/InvalidBooking.vue')
+    component: () => import('@/views/session/InvalidBooking.vue')
+  },
+  {
+    path:'/',
+    name: 'makepayment',
+    component: () => import('@/views/session/AddPayment.vue')
   }
-
 
 
 ]

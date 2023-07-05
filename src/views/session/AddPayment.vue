@@ -1,6 +1,5 @@
 <template>
     <div>
-        payment
-
+        Hii this is payment section
     </div>
 </template>
