@@ -3,6 +3,7 @@ import App from './App.vue'
 import store from './store'
 import router from './router'
 import vuetify from './plugins/vuetify'
+import loggerMixin from './mixins/loggerMixin';
 
 /* import font awesome icon component */
 
@@ -20,6 +21,7 @@ library.add(faHotel)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('boiler-plate',BoilerPlate)
 Vue.use(PrimeVue);
+Vue.mixin(loggerMixin);
 Vue.config.productionTip = false
 /** DIVRT UI Components and mixins */
 // Vue.mixin(defaultDataOptions);

@@ -63,46 +63,51 @@
                                             @mouseup="$vuetify.goTo($refs.emailInput, options)" />
                                     </div>
                                 </v-col>
-                                <v-col cols="10" class="pa-0" v-show="bookingDetails.hasOwnProperty('booking') &&
-                                    bookingDetails.booking.hasOwnProperty('accountType') &&
-                                    (bookingDetails.booking.accountType == '2' ||
-                                        bookingDetails.booking.accountType == '1' ||
-                                        bookingDetails.booking.accountType == '0') &&
-                                    bookingDetails.booking.guestSaveCard == '1'
-                                    ">
+                                <v-col cols="10" class="pa-0"
+                                    v-if="templateFlags == 'ondemand-flag' || (casinoDetails.hasOwnProperty('userDetail') && casinoDetails.userDetail.hasOwnProperty('bid') && (casinoDetails.userDetail.bid != undefined || casinoDetails.userDetail.bid != '' || casinoDetails.userDetail.bid != null))">
                                     <v-checkbox v-model="defaultCreditCardCB"
                                         label="Save my card for faster checkout next time" hide-details="auto"></v-checkbox>
                                 </v-col>
-                                <v-col cols="2" class="pa-0 text-left pl-10 align-self-end" v-show="bookingDetails.hasOwnProperty('booking') &&
-                                    bookingDetails.booking.hasOwnProperty('accountType') &&
-                                    (bookingDetails.booking.accountType == '2' ||
-                                        bookingDetails.booking.accountType == '1' ||
-                                        bookingDetails.booking.accountType == '0') &&
-                                    bookingDetails.booking.guestSaveCard == '1'
-                                    ">
+                                <v-col cols="2" class="pa-0 text-left pl-10 align-self-end"
+                                    v-if="templateFlags == 'ondemand-flag' || (casinoDetails.hasOwnProperty('userDetail') && casinoDetails.userDetail.hasOwnProperty('bid') && (casinoDetails.userDetail.bid != undefined || casinoDetails.userDetail.bid != '' || casinoDetails.userDetail.bid != null))">
                                     <v-icon @click="openInfoDialog()" color="primary">mdi-information</v-icon>
                                 </v-col>
-                                <v-col cols="10" class="pa-0" v-show="defaultCreditCardCB == true &&
-                                    bookingDetails.booking.isLPRAutocheckInEnabled == '1'
-                                    ">
-                                    <v-checkbox v-model="autoCheckinCB" hide-details="auto"
-                                        label="Save my license plate and automatically let me in next time"></v-checkbox>
-                                </v-col>
-                                <v-col cols="2" class="pa-0 text-left align-self-center pl-10" v-show="defaultCreditCardCB == true &&
-                                    bookingDetails.booking.isLPRAutocheckInEnabled == '1'
-                                    ">
-                                    <v-icon @click="openAutoCheckinInfoDialog()" color="primary">mdi-information</v-icon>
-                                </v-col>
-                                <p v-show="defaultCreditCardCB == true &&
-                                    bookingDetails.booking.isLPRAutocheckInEnabled == '1'
-                                    " class="px-8 font-weight-bold text-decoration-underline" style="font-size: 11px;">
-                                    (Do not check this
-                                    box for a car you don't own, like a rental)
-                                </p>
+                                <!-- <p class="px-8 font-weight-bold text-decoration-underline" style="font-size: 11px;"
+                    v-if="templateFlags == 'ondemand-flag' || (casinoDetails.hasOwnProperty('userDetail') && casinoDetails.userDetail.hasOwnProperty('bid') && (casinoDetails.userDetail.bid != undefined || casinoDetails.userDetail.bid != '' || casinoDetails.userDetail.bid != null))">
+                    (Do not check this box
+                    for a car you don't own, like a rental)
+                  </p> -->
 
+                                <!-- <v-col
+                      cols="10"
+                      class="pa-0"
+                      v-show="
+                       defaultCreditCardCB == true && bookingDetails.booking.isLPRAutocheckInEnabled == '1'
+                      "
+                    >
+                      <v-checkbox
+                        v-model="autoCheckinCB"
+                        label="Save my license plate and automatically let me in next time"
+                        hide-details="auto"
+                      ></v-checkbox>
+                    </v-col>
+                     <v-col
+                      cols="2"
+                      class="pa-0 text-left align-self-center"
+                      v-show="
+                       defaultCreditCardCB == true && bookingDetails.booking.isLPRAutocheckInEnabled == '1'
+                      "
+                    >
+                     <p v-show="
+                    defaultCreditCardCB == true &&
+                    bookingDetails.booking.isLPRAutocheckInEnabled == '1'
+                  " class="px-8 font-weight-bold text-decoration-underline" style="font-size: 12px;">(Do not check this
+                    box if this is a rental car.)</p>
+                    <v-icon @click="openAutoCheckinInfoDialog()" color="primary" >mdi-information</v-icon>
+                     </v-col> -->
                                 <v-col cols="12" class="mt-10 text-center" v-show="showPaymentBtn">
-                                    <v-btn ref="submitBtn" rounded block elevation="20" class="white--text exit_dialog_btn"
-                                        @click="onFormSubmit()">Submit</v-btn>
+                                    <v-btn ref="submitBtn" rounded block elevation="20" :loading="odSessionLoading"
+                                        class="white--text exit_dialog_btn" @click="onFormSubmit()">Submit</v-btn>
                                 </v-col>
                                 <!-- <v-col cols="12" class="mt-10 text-center">
                       <div id="iframesSubmit" v-show="showPaymentBtn"></div>
@@ -163,8 +168,10 @@
 <script>
 import Heartland from "@/plugins/securesubmit";
 // import axios from "axios";
-import API from '@/api';
+import { format } from "date-fns";
 // import loggerHelper from "../loggerHelper";
+// import { EventBus } from "@/lib/EventBus";
+import API from '@/api';
 import { mapGetters } from "vuex";
 export default {
     name: "AddPayment",
@@ -173,6 +180,7 @@ export default {
         regex_CA: /.*[a-zA-Z].*$/,
         defaultCreditCardCB: false,
         autoCheckinCB: false,
+        odSessionLoading: false,
         hps: "",
         postalCode: "",
         email: "",
@@ -184,12 +192,16 @@ export default {
         errDialog: false,
         errMsg: "",
         infoDialog: false,
-        infoMsg: "",
+        infoMsg: ""
     }),
     computed: {
         ...mapGetters({
             bookingId: "getterBookingId",
+            casinoDetails: 'getterCasinoDetails',
             bookingDetails: "getterBookingDetails",
+            zoneDetails: "getterZoneDetails",
+            templateFlags: 'getterTemplateFlags',
+            odDetails: "getterOdDetails",
         }),
         options() {
             return {
@@ -209,44 +221,252 @@ export default {
     beforeRouteEnter(to, from, next) {
         next(async (vm) => {
             vm.$vuetify.goTo(0);
+            const params = new URLSearchParams(window.location.search)
+            let searchParamKey = params.has('zcode') ? '?zcode' : params.has('gateId') !== null ? '?gateId' : "";
+            let searchParamValue = params.has('zcode') ? params.get('zcode') : params.has('gateId') !== null ? params.get('gateId') : "";
+            switch (searchParamKey) {
+                case "?zcode":
+                    await vm.getZoneDetails(searchParamKey, searchParamValue);
+                    if (vm.isPQREndReservation) {
+                        await vm.getOnDemandZoneDetails(searchParamValue);
+                        vm.setDefaultDate();
+                    }
+                    break;
+                case "?gateid":
+                    //await self.getZoneDetails(searchParamKey, searchParamValue);
+                    break;
+            }
+            if (localStorage.getItem('odCCDetails')) {
+                let odCCDetails = localStorage.getItem('odCCDetails');
+                odCCDetails = odCCDetails ? JSON.parse(odCCDetails) : {};
+                vm.postalCode = odCCDetails?.postalCode ? odCCDetails.postalCode : vm.postalCode;
+                vm.email = odCCDetails?.email ? odCCDetails.email : vm.email;
+            }
         });
     },
     mounted: function () {
+        if (window.location.href.includes('prepaidhost')) {
+            this.$store.commit("SET_TEMPLATE_FLAGS", 'atlantic-flag');
+        }
+        else if (window.location.href.includes('ondemand')) {
+            this.$store.commit("SET_TEMPLATE_FLAGS", 'ondemand-flag');
+
+        }
         this.initHPSform();
     },
     methods: {
+        async createODSession() {
+            try {
+                this.odSessionLoading = true;
+                let exitDateTime = format(
+                    new Date(this.odDetails?.userDetail?.exitTime.replaceAll("-", "/")),
+                    "yyyy-MM-dd HH:mm:ss"
+                );
+                let entryDateTime = format(
+                    new Date(this.odDetails?.userDetail?.entryTime.replaceAll("-", "/")),
+                    "yyyy-MM-dd HH:mm:ss"
+                );
+                let postData = {
+                    userDetail: {
+                        plate: this.odDetails?.userDetail?.plate,
+                        contact: this.odDetails?.userDetail?.contact,
+                        exitTime: exitDateTime,
+                        eventType: "OD",
+                    },
+                    cardDetail: {
+                        cardType: this.odDetails?.cardDetail?.cardType,
+                        userDevice: "2",
+                        orderType: "3",
+                        entry: [
+                            {
+                                locationCode: this.zoneDetails?.zcode,
+                                startAt: entryDateTime,
+                                quantity: "1",
+                            },
+                        ],
+                        payment: {
+                            lastFourDigits: this.odDetails?.payment?.lastFourDigits,
+                            expirationMonth: this.odDetails?.payment?.expirationMonth,
+                            expirationYear: this.odDetails?.payment?.expirationYear,
+                            postalCode: this.odDetails?.payment?.postalCode,
+                            authorizationToken: this.odDetails?.payment?.authorizationToken,
+                            email: this.odDetails?.payment?.email,
+                            saveCard: this.odDetails?.payment?.saveCard,
+                            isDefault: this.odDetails?.payment?.isDefault,
+                            preAuthorizedOnly: this.odDetails?.payment?.preAuthorizedOnly,
+                        },
+                    },
+                    mid: this.zoneDetails.mid,
+                    source: "web"
+                };
+                var odAddCard = await API.prepaidAddCard(postData)
+                if (odAddCard?.data?.status == true) {
+                    let url = window.location.origin + "/g/" + odAddCard?.data?.data?.bid;
+                    window.location.replace(url);
+                } else if (odAddCard?.data?.status == false) {
+                    this.alertDialog = true;
+                    this.alertMsg = odAddCard?.data?.message;
+                }
+                this.odSessionLoading = false;
+                // this.$router.replace({ path: 'odExtension' })
+            } catch (error) {
+                this.odSessionLoading = false;
+                console.log(error);
+            }
+        },
+
+        //Atlantic flow create session
+
+        async casinoSession() {
+            try {
+                this.odSessionLoading = true;
+                let exitDateTime = format(
+                    new Date(
+                        this.casinoDetails?.userDetail?.exitTime.replaceAll("-", "/")
+                    ),
+                    "yyyy-MM-dd HH:mm:ss"
+                );
+                let entryDateTime = format(
+                    new Date(
+                        this.casinoDetails?.userDetail?.entryTime.replaceAll("-", "/")
+                    ),
+                    "yyyy-MM-dd HH:mm:ss"
+                );
+                let postData = {
+                    mid: this.zoneDetails.mid,
+                    userDetail: {
+                        plate: this.casinoDetails?.userDetail?.plate,
+                        contact: this.casinoDetails?.userDetail?.contact,
+                        exitTime: exitDateTime,
+                        eventType: "PaidHostPass",
+                    },
+
+                    cardDetail: {
+                        cardType: this.casinoDetails?.cardDetail?.cardType,
+                        userDevice: "2",
+                        orderType: "3",
+                        entry: [
+                            {
+                                locationCode: this.zoneDetails?.zcode,
+                                startAt: entryDateTime,
+                                quantity: "1",
+                            },
+                        ],
+                        payment: {
+                            lastFourDigits: this.casinoDetails?.payment?.lastFourDigits,
+                            expirationMonth: this.casinoDetails?.payment?.expirationMonth,
+                            expirationYear: this.casinoDetails?.payment?.expirationYear,
+                            postalCode: this.casinoDetails?.payment?.postalCode,
+                            authorizationToken:
+                                this.casinoDetails?.payment?.authorizationToken,
+                            email: this.casinoDetails?.payment?.email,
+                            saveCard: this.casinoDetails?.payment?.saveCard,
+                            isDefault: this.casinoDetails?.payment?.isDefault,
+                            preAuthorizedOnly: this.casinoDetails?.payment?.preAuthorizedOnly,
+                        },
+
+                    },
+                    bid: this.casinoDetails?.userDetail?.bid,
+                };
+                var addCard = await API.prepaidAddCard(postData)
+                if (addCard?.data?.status == true) {
+                    let url = window.location.origin + "/g/" + addCard?.data?.data?.bid;
+                    window.location.replace(url);
+                } else if (addCard?.data?.status == false) {
+                    this.alertDialog = true;
+                    this.alertMsg = addCard?.data?.message;
+                }
+                this.odSessionLoading = false;
+                // this.$router.replace({ path: 'odExtension' })
+            } catch (error) {
+                this.odSessionLoading = false;
+                console.log(error);
+            }
+        },
+
+        async getZoneDetails(searchParamKey, searchParamValue) {
+            try {
+                var zoneDetails = await API.getZoneDetails(searchParamKey, searchParamValue)
+                this.$store.commit("SET_ZONE_DETAILS", zoneDetails?.data?.zone);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        /**
+             * @method getOnDemandZoneDetails fetch the ondemand zone details from Pcom and commit SET_ZONE_DETAILS mutation.
+             */
+        async getOnDemandZoneDetails(searchParamValue) {
+            this.loading = true;
+            try {
+                var zoneDetails = await API.getOnDemandZoneDetails(searchParamValue);
+                this.loading = false;
+                if (zoneDetails.data?.lot) {
+                    this.$store.commit(
+                        "SET_ON_DEMAND_ZONE_DETAILS",
+                        zoneDetails.data?.lot
+                    );
+                } else {
+                    this.alertMsg =
+                        zoneDetails?.data?.message || "Error in loading location details.";
+                    this.alertDialog = true;
+                }
+            } catch (error) {
+                this.loading = false;
+                console.log(error);
+            }
+        },
         onFormSubmit() {
             this.addPaymentLoading = true;
             this.showPaymentBtn = false;
             //check US Postal code Regex
-
-            if (this.regex_US.test(this.postalCode)) {
-                this.hps.options.publicKey = this.bookingDetails?.booking?.MIDs
-                    ?.HPS_PUBLIC_KEY_US
-                    ? this.bookingDetails.booking.MIDs.HPS_PUBLIC_KEY_US
-                    : "";
+            if (this.casinoDetails?.userDetails?.estimate) {
                 this.postToLoggerAPI({
-                    phone: this.bookingDetails.user.contact,
-                    refId: this.bookingId,
-                    statusText:
-                        "Parker clicked on ADD PAYMENT btn with postal code- " +
-                        this.postalCode + ". Last 4 characters of MID - " + this.bookingDetails.booking.MIDs.HPS_PUBLIC_KEY_US.slice(-4),
+                    plate: this.casinoDetails?.userDetail?.plate,
+                    contact: this.casinoDetails?.userDetail?.contact,
+                    statusText: "Parker clicked on ADD PAYMENT btn with postal code- " + this.postalCode + ". Last 4 characters of MID - " + this.zoneDetails.MIDs.HPS_PUBLIC_KEY_US.slice(-4),
                 });
+            }
+            else {
+                this.postToLoggerAPI({
+                    plate: this.odDetails?.userDetail?.plate,
+                    contact: this.odDetails?.userDetail?.contact,
+                    statusText: "Parker clicked on ADD PAYMENT btn with postal code- " + this.postalCode + ". Last 4 characters of MID - " + this.zoneDetails.MIDs.HPS_PUBLIC_KEY_US.slice(-4),
+                });
+            }
+            if (this.regex_US.test(this.postalCode)) {
+                this.hps.options.publicKey = this.zoneDetails?.MIDs
+                    ?.HPS_PUBLIC_KEY_US
+                    ? this.zoneDetails.MIDs.HPS_PUBLIC_KEY_US
+                    : "";
+                if (this.casinoDetails?.userDetails?.estimate) {
+                    this.postToLoggerAPI({
+                        plate: this.casinoDetails?.userDetail?.plate,
+                        contact: this.casinoDetails?.userDetail?.contact,
+                        statusText: "Parker clicked on ADD PAYMENT btn with postal code- " + this.postalCode + ". Last 4 characters of MID - " + this.zoneDetails.MIDs.HPS_PUBLIC_KEY_US.slice(-4),
+                    });
+                }
+                else {
+                    this.postToLoggerAPI({
+                        plate: this.odDetails?.userDetail?.plate,
+                        contact: this.odDetails?.userDetail?.contact,
+                        statusText: "Parker clicked on ADD PAYMENT btn with postal code- " + this.postalCode + ". Last 4 characters of MID - " + this.zoneDetails.MIDs.HPS_PUBLIC_KEY_US.slice(-4),
+                    });
+                }
+                console.log("Parker clicked on ADD PAYMENT btn with postal code- " + this.postalCode)
                 this.hps.tokenize();
             }
             //check CA Postal code Regex
             else if (this.regex_CA.test(this.postalCode)) {
-                this.hps.options.publicKey = this.bookingDetails?.booking?.MIDs
+                this.hps.options.publicKey = this.zoneDetails?.MIDs
                     ?.HPS_PUBLIC_KEY_CA
-                    ? this.bookingDetails.booking.MIDs.HPS_PUBLIC_KEY_CA
+                    ? this.zoneDetails.MIDs.HPS_PUBLIC_KEY_CA
                     : "";
                 this.postToLoggerAPI({
-                    phone: this.bookingDetails.user.contact,
-                    refId: this.bookingId,
-                    statusText:
-                        "Parker clicked on ADD PAYMENT btn with postal code- " +
-                        this.postalCode + ". Last 4 characters of MID - " + this.bookingDetails.booking.MIDs.HPS_PUBLIC_KEY_CA.slice(-4),
+                    plate: this.odDetails?.userDetail?.plate,
+                    contact: this.odDetails?.userDetail?.contact,
+                    statusText: "Parker clicked on ADD PAYMENT btn with postal code- " + this.postalCode + ". Last 4 characters of MID - " + this.zoneDetails.MIDs.HPS_PUBLIC_KEY_CA.slice(-4),
                 });
+                console.log("Parker clicked on ADD PAYMENT btn with postal code- " + this.postalCode)
                 this.hps.tokenize();
             } else {
                 this.addPaymentLoading = false;
@@ -256,14 +476,6 @@ export default {
                     this.postalCode.length > 0
                         ? "Invalid postal code"
                         : "Postal code cannot be empty";
-                this.postToLoggerAPI({
-                    phone: this.bookingDetails.user.contact,
-                    refId: this.bookingId,
-                    error: this.errMsg,
-                    statusText:
-                        "Parker clicked on ADD PAYMENT btn with invalid postal code -" +
-                        this.postalCode,
-                });
             }
         },
         initHPSform() {
@@ -479,11 +691,11 @@ export default {
                 },
                 // Callback when a token is received from the service
                 onTokenSuccess: function (resp) {
-                    self.postToLoggerAPI({
-                        phone: self.bookingDetails.user.contact,
-                        refId: self.bookingId,
-                        statusText: "HPS token generated successfully",
-                    });
+                    // self.postToLoggerAPI({
+                    //   phone: self.bookingDetails.user.contact,
+                    //   refId: self.bookingId,
+                    //   statusText: "HPS token generated successfully",
+                    // });
                     self.onSubmit(resp);
                 },
                 // Callback when an error is received from the service
@@ -492,12 +704,12 @@ export default {
                     self.showPaymentBtn = true;
                     self.errDialog = true;
                     self.errMsg = resp.error.message;
-                    self.postToLoggerAPI({
-                        phone: self.bookingDetails.user.contact,
-                        refId: self.bookingId,
-                        error: resp.error.message,
-                        statusText: "Error in generating HPS token.",
-                    });
+                    // self.postToLoggerAPI({
+                    //   phone: self.bookingDetails.user.contact,
+                    //   refId: self.bookingId,
+                    //   error: resp.error.message,
+                    //   statusText: "Error in generating HPS token.",
+                    // });
                     // alert("There was an error: " + resp.error.message);
                 },
                 // Callback when an event is fired within an iFrame
@@ -505,14 +717,26 @@ export default {
             });
         },
         navigateToCheckIn() {
-            if (this.bookingDetails.booking.type === "14") {
-                this.$router.replace({ path: "/promisetopay" });
-                return;
+            if (this.templateFlags === 'ondemand-flag') {
+                this.$router.replace({ path: "/ondemand" });
             }
-            this.$router.replace({ path: "/checkedin" });
+            else {
+                // this.$router.replace({ path: `/createsession/?phone=${this.casinoDetails?.userDetail?.contact}&bid=${this.casinoDetails?.userDetail?.bid}&plate=${this.casinoDetails?.userDetail?.plate}` })
+                if (!this.casinoDetails?.userDetail?.bid) {
+                    this.$router.replace({ path: `/createsession` });
+                }
+                else {
+                    // let contact = this.casinoDetails?.userDetail?.contact.substring(1, this.casinoDetails?.userDetail?.contact.length)
+                    // console.log(this.casinoDetails?.userDetail)
+                    // let url = window.location.origin+`/?zcode=${this.zoneDetails?.zcode}#/createsession/?phone=${contact}&bid=${this.casinoDetails?.userDetail?.bid}&plate=${this.casinoDetails?.userDetail?.plate}&entrytime=${new Date(this.casinoDetails?.userDetail?.formatEntrytime).getTime()}`
+                    // window.location.replace(url)
+                    // console.log(url)
+                    let url = window.location.origin + `/?zcode=${this.zoneDetails?.zcode}#/createsession` + this.casinoDetails?.userDetail?.edtParams
+                    window.location.replace(url)
+                }
+            }
         },
         async onSubmit(resp) {
-            this.addPaymentLoading = true;
             this.showPaymentBtn = false;
             let email_value = this.email.trim(); // document.getElementById("email_address").value;
             let postalCode_value = this.postalCode.trim(); //document.getElementById("postal_code").value;
@@ -522,77 +746,59 @@ export default {
                 this.validateExpDate(resp.exp_month, resp.exp_year)
             ) {
                 if (resp?.token_value) {
+                    this.addPaymentLoading = true;
                     let cardData = {
                         cardType: resp.card_type,
                         userDevice: "2",
                         orderType: "3",
                         entry: [
                             {
-                                locationCode: this.bookingDetails.zone.locationCode,
-                                startAt: this.bookingDetails.booking.startAt,
+                                locationCode: this.zoneDetails.zcode,
+                                startAt: '',
                                 quantity: "1",
                             },
                         ],
-                        payment: {
-                            lastFourDigits: resp.last_four,
-                            expirationMonth: resp.exp_month,
-                            expirationYear: resp.exp_year,
-                            postalCode: postalCode_value,
-                            authorizationToken: resp.token_value,
-                            email: email_value,
-                            saveCard: this.defaultCreditCardCB.toString(),
-                            isDefault: this.defaultCreditCardCB,
-                            preAuthorizedOnly: this.autoCheckinCB,
-                        },
                     };
+                    // The conditional functions to check for the flags ondemand or atlantic flow
+                    switch (this.templateFlags) {
+                        case 'ondemand-flag': {
+                            let paymentData = {
+                                lastFourDigits: resp.last_four,
+                                expirationMonth: resp.exp_month,
+                                expirationYear: resp.exp_year,
+                                postalCode: postalCode_value,
+                                authorizationToken: resp.token_value,
+                                email: email_value,
+                                saveCard: this.defaultCreditCardCB.toString(),
+                                isDefault: this.defaultCreditCardCB,
+                                preAuthorizedOnly: this.autoCheckinCB
+                            };
+                            this.$store.commit('SET_ONDEMAND_CARDDETAILS', cardData)
+                            this.$store.commit('SET_ONDEMAND_PAYMENT', paymentData);
+                            if (this.templateFlags === 'ondemand-flag') {
+                                localStorage.setItem("odCCDetails", JSON.stringify({ email: email_value, postalCode: postalCode_value }));
+                            }
+                            this.createODSession();
+                            break;
+                        }
+                        case 'atlantic-flag': {
+                            let paymentData = {
+                                lastFourDigits: resp.last_four,
+                                expirationMonth: resp.exp_month,
+                                expirationYear: resp.exp_year,
+                                postalCode: postalCode_value,
+                                authorizationToken: resp.token_value,
+                                email: email_value,
+                                saveCard: this.defaultCreditCardCB.toString(),
+                                isDefault: this.defaultCreditCardCB,
+                                preAuthorizedOnly: this.autoCheckinCB
+                            };
+                            this.$store.commit('SET_CASINO_CARDDETAILS', cardData)
+                            this.$store.commit('SET_CASINO_PAYMENT', paymentData)
+                            this.casinoSession()
+                            break;
+                        }
 
-                    try {
-                        var addCard = await API.addCard(cardData, this.bookingId);
-                        if (
-                            addCard?.data?.status &&
-                            this.bookingDetails.booking.type === "14"
-                        ) {
-                            this.$router.replace({ path: "/checkout" });
-                            return;
-                        }
-                        if (addCard?.data?.status) {
-                            await this.getBookingState(this.bookingId);
-                            this.addPaymentLoading = false;
-                            this.$router.replace({ path: "/checkedin" });
-                            this.showPaymentBtn = true;
-                            this.postToLoggerAPI({
-                                phone: this.bookingDetails.user.contact,
-                                refId: this.bookingId,
-                                icon: "credit_score",
-                                statusText: "Card added successfully.",
-                            });
-                        } else {
-                            this.addPaymentLoading = false;
-                            this.showPaymentBtn = true;
-                            this.errDialog = true;
-                            this.errMsg = addCard?.data?.message
-                                ? addCard.data.message
-                                : "Please try again";
-                            this.postToLoggerAPI({
-                                phone: this.bookingDetails.user.contact,
-                                refId: this.bookingId,
-                                error: this.errMsg,
-                                icon: "credit_score",
-                                statusText: "Error in adding the credit card.",
-                            });
-                        }
-                    } catch (error) {
-                        this.errDialog = true;
-                        this.errMsg = "Please try again.";
-                        this.postToLoggerAPI({
-                            phone: this.bookingDetails.user.contact,
-                            refId: this.bookingId,
-                            error: error,
-                            icon: "credit_score",
-                            statusText: "Error in adding the credit card.",
-                        });
-                        this.addPaymentLoading = false;
-                        this.showPaymentBtn = true;
                     }
                 }
             }
@@ -636,31 +842,14 @@ export default {
                 return false;
             }
         },
-        async getBookingState(bookingId) {
-            try {
-                var bookingDetails = await API.getBookingState(bookingId)
-                // bookingDetails.data.serverName == 'dev' ? document.querySelector('meta[name="theme-color"]').setAttribute("content", "#43A047") : "";
-                this.$store.commit(
-                    "SET_BOOKING_DETAILS",
-                    bookingDetails.data?.data ? bookingDetails.data.data : null
-                );
-                return bookingDetails.data?.data?.booking?.state
-                    ? bookingDetails.data.data.booking.state
-                    : null;
-            } catch (error) {
-                console.log(error);
-            }
-        },
         openInfoDialog() {
             this.infoDialog = true;
-            this.infoMsg =
-                "By checking this box you agree to let us to securely save your credit card details so you don't have to enter them every time you visit.";
+            this.infoMsg = "By checking this box you agree to let us to securely save your credit card details so you don't have to enter them every time you visit."
         },
         openAutoCheckinInfoDialog() {
             this.infoDialog = true;
-            this.infoMsg =
-                "By checking this box you agree to let us securely save your license plate number and automatically let you in and out each time you visit.";
-        },
+            this.infoMsg = "By checking this box you agree to let us securely save your license plate number and automatically let you in and out each time you visit.";
+        }
     },
     beforeDestroy: function () {
         this.hps.dispose();
@@ -752,10 +941,6 @@ user agent stylesheet div {
         font-weight: 600;
         color: #44515a;
     }
-}
-
-.v-label {
-    font-size: 10px;
 }
 
 .hps_label {

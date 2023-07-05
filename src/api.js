@@ -52,7 +52,9 @@ const prepaidOpenTransaction = async (data) => {
     return await apiHelper("POST", "/api/v1/prepaid/openTransaction", data)
 
 }
-
+const prepaidAddCard = async (data) => {
+    return await apiHelper("POST", "/api/v1/prepaid/addCard", data)
+}
 const getOnDemandZoneDetails = async (searchParamValue) => {
     return await apiHelper(
         "GET",
@@ -91,7 +93,7 @@ const reEnter = async (bid) => {
 /**
  * export declarations
  */
-export default{
-    reEnter, disassociateCard, modifyLPR, findBooking, createSession, getOnDemandZoneDetails, prepaidOpenTransaction, createHostPass, getZoneDetails, validateBooking, qrCheckout, getPedestrianAccess, getRate, extendReservation, getBookingState, addCard
+export default {
+    prepaidAddCard, reEnter, disassociateCard, modifyLPR, findBooking, createSession, getOnDemandZoneDetails, prepaidOpenTransaction, createHostPass, getZoneDetails, validateBooking, qrCheckout, getPedestrianAccess, getRate, extendReservation, getBookingState, addCard
 
 }

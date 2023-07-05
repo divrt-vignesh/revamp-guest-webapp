@@ -26,6 +26,11 @@ export default {
       bookingDetails: "getterBookingDetails",
       zoneDetails: "getterZoneDetails",
     }),
+    focusTask() {
+      const params = new URLSearchParams(window.location.search)
+      return params.get('sessiontype') == 'cico' || params.get('sessiontype') == 'addpayment' || params.get('sessiontype') == 'successreservation' || params.get('sessiontype') == 'confirmreservation' || params.get('sessiontype') == 'odReceipt' || params.get('sessiontype') == 'makepayment' || params.get('sessiontype') == 'ondemand';
+      // window.location.hash == "#/addpayment" || window.location.hash == "#/createreservation" || window.location.hash == "#/successreservation" || window.location.hash == "#/confirmreservation" || window.location.hash == "#/ondemand/odReceipt" || window.location.hash == "#/ondemand/makepayment" || window.location.hash == "#/ondemand" || window.location.hash == "#/prepaidhost/odReceipt" || window.location.hash == "#/prepaidhost/makepayment" || window.location.hash == "#/prepaidhost"
+    },
     prepaidExit() {
       return this.bookingDetails.booking?.type == 13 && this.checkReservationEndDate
     },
@@ -43,10 +48,10 @@ export default {
     document.addEventListener("visibilitychange", function () {
       if (document.hidden) {
         // stop running expensive task
-      } else if (window.location.hash == "#/addpayment" || window.location.hash == "#/createreservation" || window.location.hash == "#/successreservation" || window.location.hash == "#/confirmreservation" || window.location.hash == "#/ondemand/odReceipt" || window.location.hash == "#/ondemand/makepayment" || window.location.hash == "#/ondemand" || window.location.hash == "#/prepaidhost/odReceipt" || window.location.hash == "#/prepaidhost/makepayment" || window.location.hash == "#/prepaidhost") {
+      } else if (this.focusTask) {
         // page has focus, begin running task
       } else {
-        window.location.reload();
+        // window.location.reload();
       }
     });
   },
@@ -54,8 +59,8 @@ export default {
     var self = this;
 
     const params = new URLSearchParams(window.location.search)
-    let searchParamKey = params.has('zcode') !== null ? '?zcode' : params.has('gateId') !== null ? '?gateId' : "";
-    let searchParamValue = params.has('zcode') !== null ? params.get('zcode') : params.has('gateId') !== null ? params.get('gateId') : "";
+    let searchParamKey = params.has('zcode') ? '?zcode' : params.has('gateId') !== null ? '?gateId' : "";
+    let searchParamValue = params.has('zcode') ? params.get('zcode') : params.has('gateId') !== null ? params.get('gateId') : "";
     switch (searchParamKey) {
       case "?zcode":
         await self.getZoneDetails(searchParamKey, searchParamValue);
@@ -242,7 +247,6 @@ export default {
             ? bookingDetails.data.serverName
             : null
         );
-        console.log(bookingDetails?.data?.data?.booking?.state)
         return bookingDetails.data?.data?.booking?.state
           ? bookingDetails.data.data.booking.state
           : null;

@@ -278,9 +278,6 @@ import "primeicons/primeicons.css"                           //icons
 import { dateToTimeZoneDate } from "@/utils/formatDateTime";
 // import axios from "axios";
 import SpherePhoneNumberInput from '@/uiComponents/SpherePhoneNumberInput/VuePhoneNumberInput'
-
-
-import APIHelper from "@/api";
 // import VuePhoneNumberInput from "vue-phone-number-input";
 // import "vue-phone-number-input/dist/vue-phone-number-input.css";
 // import moment from "moment";
@@ -979,7 +976,7 @@ export default {
                 Object.assign(postObj, { createNewSession: 1 });
             }
             try {
-                var session = await APIHelper("POST", "/api/v1/addBooking", postObj);
+                var session = await API.createSession(postObj);
                 let bid = session?.data?.refno;
                 if (session.data.status === false) {
                     this.errMsg = session?.data?.message ? session.data.message : "";
@@ -1032,10 +1029,7 @@ export default {
          */
         async getBookingDetails(bookingId) {
             try {
-                var bookingDetails = await APIHelper(
-                    "GET",
-                    "/api/v1/booking/config/" + bookingId
-                );
+                var bookingDetails = await API.getBookingState(bookingId)
                 this.$store.commit(
                     "SET_BOOKING_DETAILS",
                     bookingDetails.data?.data ? bookingDetails.data.data : null
