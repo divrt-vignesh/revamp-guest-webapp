@@ -1,2 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0b24ea"],{"240b":function(n,e,t){"use strict";t.r(e);var l=function(){var n=this,e=n.$createElement,t=n._self._c||e;return t("div",[n._v(" Invalid booking ")])},u=[],a=t("2877"),c={},i=Object(a["a"])(c,l,u,!1,null,null,null);e["default"]=i.exports}}]);
-//# sourceMappingURL=chunk-2d0b24ea.6aadcabe.js.map
