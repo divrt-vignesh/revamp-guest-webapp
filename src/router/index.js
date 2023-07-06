@@ -93,15 +93,10 @@ const routes = [
     component: () => import('@/views/session/InvalidBooking.vue')
   },
   {
-    path:'/',
+    path: '/',
     name: 'addpayment',
     component: () => import('@/views/session/AddPayment.vue')
   },
-  {
-    path: '/',
-    name: 'makepayment',
-    component: () => import('@/views/session/MakePayment.vue')
-  }
 
 
 ]

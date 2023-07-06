@@ -155,7 +155,7 @@ export default {
           self.$router.push({ name: 'unpaidexit', query: { bid: bookingId, state: 'unpaidexit' } });
           break;
         case "19":
-          self.$router.push({ name: 'promisetopay', query: { bid: bookingId, mode: 'promisetopay' } });
+          self.$router.push({ name: 'promisetopay', query: { bid: bookingId, sessiontype: 'promisetopay' } });
           break;
         case "-99":
           self.$router.push({ name: 'expired', query: { bid: bookingId, state: 'expired' } });

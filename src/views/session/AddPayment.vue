@@ -191,7 +191,11 @@ export default {
     computed: {
         ...mapGetters({
             bookingId: "getterBookingId",
+            casinoDetails: 'getterCasinoDetails',
             bookingDetails: "getterBookingDetails",
+            zoneDetails: "getterZoneDetails",
+            templateFlags: 'getterTemplateFlags',
+            odDetails: "getterOdDetails",
         }),
         options() {
             return {
@@ -221,51 +225,113 @@ export default {
             this.addPaymentLoading = true;
             this.showPaymentBtn = false;
             //check US Postal code Regex
-
-            if (this.regex_US.test(this.postalCode)) {
-                this.hps.options.publicKey = this.bookingDetails?.booking?.MIDs
-                    ?.HPS_PUBLIC_KEY_US
-                    ? this.bookingDetails.booking.MIDs.HPS_PUBLIC_KEY_US
-                    : "";
-                this.postToLoggerAPI({
-                    phone: this.bookingDetails.user.contact,
-                    refId: this.bookingId,
-                    statusText:
-                        "Parker clicked on ADD PAYMENT btn with postal code- " +
-                        this.postalCode + ". Last 4 characters of MID - " + this.bookingDetails.booking.MIDs.HPS_PUBLIC_KEY_US.slice(-4),
-                });
-                this.hps.tokenize();
+            const params = new URLSearchParams(window.location.search);
+            if ((params.get('sessiontype') == 'cico' && this.zoneDetails?.isPQREndReservation == '1') || params.get('sessiontype') == 'ondemand') {
+                if (this.casinoDetails?.userDetails?.estimate) {
+                    this.postToLoggerAPI({
+                        plate: this.casinoDetails?.userDetail?.plate,
+                        contact: this.casinoDetails?.userDetail?.contact,
+                        statusText: "Parker clicked on ADD PAYMENT btn with postal code- " + this.postalCode + ". Last 4 characters of MID - " + this.zoneDetails.MIDs.HPS_PUBLIC_KEY_US.slice(-4),
+                    });
+                }
+                else {
+                    this.postToLoggerAPI({
+                        plate: this.odDetails?.userDetail?.plate,
+                        contact: this.odDetails?.userDetail?.contact,
+                        statusText: "Parker clicked on ADD PAYMENT btn with postal code- " + this.postalCode + ". Last 4 characters of MID - " + this.zoneDetails.MIDs.HPS_PUBLIC_KEY_US.slice(-4),
+                    });
+                }
+                if (this.regex_US.test(this.postalCode)) {
+                    this.hps.options.publicKey = this.zoneDetails?.MIDs
+                        ?.HPS_PUBLIC_KEY_US
+                        ? this.zoneDetails.MIDs.HPS_PUBLIC_KEY_US
+                        : "";
+                    if (this.casinoDetails?.userDetails?.estimate) {
+                        this.postToLoggerAPI({
+                            plate: this.casinoDetails?.userDetail?.plate,
+                            contact: this.casinoDetails?.userDetail?.contact,
+                            statusText: "Parker clicked on ADD PAYMENT btn with postal code- " + this.postalCode + ". Last 4 characters of MID - " + this.zoneDetails.MIDs.HPS_PUBLIC_KEY_US.slice(-4),
+                        });
+                    }
+                    else {
+                        this.postToLoggerAPI({
+                            plate: this.odDetails?.userDetail?.plate,
+                            contact: this.odDetails?.userDetail?.contact,
+                            statusText: "Parker clicked on ADD PAYMENT btn with postal code- " + this.postalCode + ". Last 4 characters of MID - " + this.zoneDetails.MIDs.HPS_PUBLIC_KEY_US.slice(-4),
+                        });
+                    }
+                    console.log("Parker clicked on ADD PAYMENT btn with postal code- " + this.postalCode)
+                    this.hps.tokenize();
+                }
+                //check CA Postal code Regex
+                else if (this.regex_CA.test(this.postalCode)) {
+                    this.hps.options.publicKey = this.zoneDetails?.MIDs
+                        ?.HPS_PUBLIC_KEY_CA
+                        ? this.zoneDetails.MIDs.HPS_PUBLIC_KEY_CA
+                        : "";
+                    this.postToLoggerAPI({
+                        plate: this.odDetails?.userDetail?.plate,
+                        contact: this.odDetails?.userDetail?.contact,
+                        statusText: "Parker clicked on ADD PAYMENT btn with postal code- " + this.postalCode + ". Last 4 characters of MID - " + this.zoneDetails.MIDs.HPS_PUBLIC_KEY_CA.slice(-4),
+                    });
+                    console.log("Parker clicked on ADD PAYMENT btn with postal code- " + this.postalCode)
+                    this.hps.tokenize();
+                } else {
+                    this.addPaymentLoading = false;
+                    this.showPaymentBtn = true;
+                    this.errDialog = true;
+                    this.errMsg =
+                        this.postalCode.length > 0
+                            ? "Invalid postal code"
+                            : "Postal code cannot be empty";
+                }
             }
-            //check CA Postal code Regex
-            else if (this.regex_CA.test(this.postalCode)) {
-                this.hps.options.publicKey = this.bookingDetails?.booking?.MIDs
-                    ?.HPS_PUBLIC_KEY_CA
-                    ? this.bookingDetails.booking.MIDs.HPS_PUBLIC_KEY_CA
-                    : "";
-                this.postToLoggerAPI({
-                    phone: this.bookingDetails.user.contact,
-                    refId: this.bookingId,
-                    statusText:
-                        "Parker clicked on ADD PAYMENT btn with postal code- " +
-                        this.postalCode + ". Last 4 characters of MID - " + this.bookingDetails.booking.MIDs.HPS_PUBLIC_KEY_CA.slice(-4),
-                });
-                this.hps.tokenize();
-            } else {
-                this.addPaymentLoading = false;
-                this.showPaymentBtn = true;
-                this.errDialog = true;
-                this.errMsg =
-                    this.postalCode.length > 0
-                        ? "Invalid postal code"
-                        : "Postal code cannot be empty";
-                this.postToLoggerAPI({
-                    phone: this.bookingDetails.user.contact,
-                    refId: this.bookingId,
-                    error: this.errMsg,
-                    statusText:
-                        "Parker clicked on ADD PAYMENT btn with invalid postal code -" +
-                        this.postalCode,
-                });
+            else {
+                if (this.regex_US.test(this.postalCode)) {
+                    this.hps.options.publicKey = this.bookingDetails?.booking?.MIDs
+                        ?.HPS_PUBLIC_KEY_US
+                        ? this.bookingDetails.booking.MIDs.HPS_PUBLIC_KEY_US
+                        : "";
+                    this.postToLoggerAPI({
+                        phone: this.bookingDetails.user.contact,
+                        refId: this.bookingId,
+                        statusText:
+                            "Parker clicked on ADD PAYMENT btn with postal code- " +
+                            this.postalCode + ". Last 4 characters of MID - " + this.bookingDetails.booking.MIDs.HPS_PUBLIC_KEY_US.slice(-4),
+                    });
+                    this.hps.tokenize();
+                }
+                //check CA Postal code Regex
+                else if (this.regex_CA.test(this.postalCode)) {
+                    this.hps.options.publicKey = this.bookingDetails?.booking?.MIDs
+                        ?.HPS_PUBLIC_KEY_CA
+                        ? this.bookingDetails.booking.MIDs.HPS_PUBLIC_KEY_CA
+                        : "";
+                    this.postToLoggerAPI({
+                        phone: this.bookingDetails.user.contact,
+                        refId: this.bookingId,
+                        statusText:
+                            "Parker clicked on ADD PAYMENT btn with postal code- " +
+                            this.postalCode + ". Last 4 characters of MID - " + this.bookingDetails.booking.MIDs.HPS_PUBLIC_KEY_CA.slice(-4),
+                    });
+                    this.hps.tokenize();
+                } else {
+                    this.addPaymentLoading = false;
+                    this.showPaymentBtn = true;
+                    this.errDialog = true;
+                    this.errMsg =
+                        this.postalCode.length > 0
+                            ? "Invalid postal code"
+                            : "Postal code cannot be empty";
+                    this.postToLoggerAPI({
+                        phone: this.bookingDetails.user.contact,
+                        refId: this.bookingId,
+                        error: this.errMsg,
+                        statusText:
+                            "Parker clicked on ADD PAYMENT btn with invalid postal code -" +
+                            this.postalCode,
+                    });
+                }
             }
         },
         initHPSform() {
@@ -481,11 +547,11 @@ export default {
                 },
                 // Callback when a token is received from the service
                 onTokenSuccess: function (resp) {
-                    self.postToLoggerAPI({
-                        phone: self.bookingDetails.user.contact,
-                        refId: self.bookingId,
-                        statusText: "HPS token generated successfully",
-                    });
+                    // self.postToLoggerAPI({
+                    //     phone: self.bookingDetails.user.contact,
+                    //     refId: self.bookingId,
+                    //     statusText: "HPS token generated successfully",
+                    // });
                     self.onSubmit(resp);
                 },
                 // Callback when an error is received from the service
@@ -508,10 +574,10 @@ export default {
         },
         navigateToCheckIn() {
             if (this.bookingDetails.booking.type === "14") {
-                this.$router.replace({ path: "/promisetopay" });
+                this.$router.push({ name: 'promisetopay', query: { bid: this.bookingId, state: 'checkout' } });
                 return;
             }
-            this.$router.replace({ path: "/checkedin" });
+            this.$router.push({ name: 'checkedin', query: { bid: this.bookingId, sessiontype: 'promisetopay' } });
         },
         async onSubmit(resp) {
             this.addPaymentLoading = true;
@@ -609,13 +675,13 @@ export default {
                                     addCard?.data?.status &&
                                     this.bookingDetails.booking.type === "14"
                                 ) {
-                                    this.$router.replace({ path: "/checkout" });
+                                    this.$router.push({ name: 'checkout', query: { bid: this.bookingId, state: 'checkout' } });
                                     return;
                                 }
                                 if (addCard?.data?.status) {
                                     await this.getBookingState(this.bookingId);
                                     this.addPaymentLoading = false;
-                                    this.$router.replace({ path: "/checkedin" });
+                                    this.$router.push({ name: 'checkedin', query: { bid: this.bookingId, state: 'checkedin' } });
                                     this.showPaymentBtn = true;
                                     this.postToLoggerAPI({
                                         phone: this.bookingDetails.user.contact,
@@ -659,8 +725,9 @@ export default {
         //Atlantic flow create session
 
         async casinoSession() {
+            console.log(this.casinoDetails?.userDetail.exitTime)
             try {
-                this.odSessionLoading = true;
+                this.addPaymentLoading = true;
                 let exitDateTime = format(
                     new Date(
                         this.casinoDetails?.userDetail?.exitTime.replaceAll("-", "/")
@@ -711,22 +778,23 @@ export default {
                 };
                 var addCard = await API.prepaidAddCard(postData)
                 if (addCard?.data?.status == true) {
-                    let url = window.location.origin + "/g/" + addCard?.data?.data?.bid;
-                    window.location.replace(url);
+                    this.$router.push({ query: { bid: addCard?.data?.data?.bid } });
+                    window.location.reload();
+
                 } else if (addCard?.data?.status == false) {
                     this.alertDialog = true;
                     this.alertMsg = addCard?.data?.message;
                 }
-                this.odSessionLoading = false;
+                this.addPaymentLoading = false;
                 // this.$router.replace({ path: 'odExtension' })
             } catch (error) {
-                this.odSessionLoading = false;
+                this.addPaymentLoading = false;
                 console.log(error);
             }
         },
         async createODSession() {
             try {
-                this.odSessionLoading = true;
+                this.addPaymentLoading = true;
                 let exitDateTime = format(
                     new Date(this.odDetails?.userDetail?.exitTime.replaceAll("-", "/")),
                     "yyyy-MM-dd HH:mm:ss"
@@ -735,6 +803,7 @@ export default {
                     new Date(this.odDetails?.userDetail?.entryTime.replaceAll("-", "/")),
                     "yyyy-MM-dd HH:mm:ss"
                 );
+                console.log('hre')
                 let postData = {
                     userDetail: {
                         plate: this.odDetails?.userDetail?.plate,
@@ -770,16 +839,16 @@ export default {
                 };
                 var odAddCard = await API.prepaidAddCard(postData)
                 if (odAddCard?.data?.status == true) {
-                    let url = window.location.origin + "/g/" + odAddCard?.data?.data?.bid;
-                    window.location.replace(url);
+                    this.$router.replace({ query: { bid: odAddCard?.data?.data?.bid } });
+
                 } else if (odAddCard?.data?.status == false) {
                     this.alertDialog = true;
                     this.alertMsg = odAddCard?.data?.message;
                 }
-                this.odSessionLoading = false;
+                this.addPaymentLoading = false;
                 // this.$router.replace({ path: 'odExtension' })
             } catch (error) {
-                this.odSessionLoading = false;
+                this.addPaymentLoading = false;
                 console.log(error);
             }
         },
