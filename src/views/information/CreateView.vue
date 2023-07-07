@@ -226,7 +226,7 @@
                             <v-container class="pa-0" fluid v-else>
                                 <v-row no-gutters>
                                     <v-col cols="12" class="px-2">
-                                        <v-btn rounded elevation="20" class="add_licence_plate_btn white--text"
+                                        <v-btn width="100%" class="add_licence_plate_btn "
                                             :loading="addLicencePlateBtnLoading" :disabled="disableAddLicencePlateBtn"
                                             @click="createSession()">{{
                                                 reEnterPlate ? "Confirm" : "Continue" }}</v-btn>
@@ -259,6 +259,26 @@
                     </v-col>
                 </v-row>
             </footer>
+            <v-dialog v-model="confirmCreateSessionDialog" max-width="fit-content">
+                <v-card class="pa-0">
+                    <v-card-title class="justify-center">
+                        <v-icon x-large color="red accent-2">mdi-alert-outline</v-icon>
+                    </v-card-title>
+                    <v-card-text class="text-center mt-5" style="font-size: 15px">
+                        <span v-html="errMsg"></span>
+                    </v-card-text>
+                    <v-card-actions class="text-center pb-6">
+                        <v-container pa-0 fluid>
+                            <v-row no-gutters>
+                                <v-col cols="12">
+                                    <v-btn rounded block elevation="0" class="white--text exit_dialog_btn"
+                                        @click="setReenterPlateFlag">OK</v-btn>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
         </boiler-plate>
 
     </v-container>
@@ -998,7 +1018,6 @@ export default {
                     return;
                 }
                 await this.getBookingDetails(bid);
-                let url = window.location.origin + "/g/" + bid;
                 this.addLicencePlateBtnLoading = false;
                 this.reEnterPlate
                     ? this.postToLoggerAPI({
@@ -1018,7 +1037,8 @@ export default {
                             "Parker session found. Parker opened his/her session using generic payment QR",
                     });
 
-                window.location.replace(url);
+                this.$router.replace({ query: { bid: bid } });
+                window.location.reload();
             } catch (error) {
                 this.addLicencePlateBtnLoading = false;
                 console.log(error);

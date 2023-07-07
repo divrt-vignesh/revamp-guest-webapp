@@ -97,6 +97,10 @@ const routes = [
     name: 'addpayment',
     component: () => import('@/views/session/AddPayment.vue')
   },
+  {
+    path: '/receipt',
+    component: () => import('@/views/loadingstates/Receipt')
+  }
 
 
 ]

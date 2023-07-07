@@ -61,6 +61,10 @@ export default {
     const params = new URLSearchParams(window.location.search)
     let searchParamKey = params.has('zcode') ? '?zcode' : params.has('gateId') !== null ? '?gateId' : "";
     let searchParamValue = params.has('zcode') ? params.get('zcode') : params.has('gateId') !== null ? params.get('gateId') : "";
+    if (window.location.search.includes('/receipt')) {
+      console.log(window.location.search)
+      return;
+    }
     switch (searchParamKey) {
       case "?zcode":
         await self.getZoneDetails(searchParamKey, searchParamValue);
@@ -73,6 +77,7 @@ export default {
         //await self.getZoneDetails(searchParamKey, searchParamValue);
         break;
     }
+
     if (
       window.location.search.includes("zcode") &&
       (window.location.href.includes("createreservation"))

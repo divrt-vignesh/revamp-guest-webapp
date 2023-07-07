@@ -28,40 +28,6 @@ const genPass = () => {
     c += c.toUpperCase() + 1234567890;
     return [...Array(6)].map(() => c[~~(Math.random() * 62)]).join("");
 }
-const formatExitDateTime = (time, val) => {
-    if (time !== null && time !== undefined && time != '') {
-        let utcDate = new Date(time * 1000).toUTCString(); //"Wed, 27 Jan 2021 13:59:04 GMT"
-        let month = utcDate.split(",")[1].split(" ")[2]; // Jan
-        let date = utcDate.split(",")[1].split(" ")[1]; // 27
-        let year = utcDate.split(",")[1].split(" ")[3];
-        let hr = utcDate.split(",")[1].split(" ")[4].split(":")[0]; // 13
-        let min = utcDate.split(",")[1].split(" ")[4].split(":")[1]; //59
-        let formatHr = Number(hr) > 12 ? Number(hr) - 12 : Number(hr); // 1
-        formatHr = Number(hr) == 0 ? 12 : formatHr;
-
-        formatHr = Number(formatHr) >= 10 ? Number(formatHr) : '0' + formatHr; //01
-        let amOrpm = Number(hr) >= 12 ? "p" : "a"; //PM
-        let ampm = Number(hr) >= 12 ? "PM" : "AM";
-        switch (val) {
-            case 'hour': {
-                return formatHr + amOrpm;
-            }
-            case 'mins': {
-                return min
-            }
-            case 'date': {
-                return month + " " + date + ", " + year + " " + formatHr + ":" + min + " " + ampm;
-            }
-            case 'expire': {
-                return formatHr + ":" + min + " " + ampm + ' on ' + month + " " + date
-            }
-            case 'checkin': {
-                return formatHr + ":" + min + " " + ampm + ' on ' + month + " " + date
-            }
-        }
-    }
-    //Jan 27, 01:59 PM
-}
 
 const round = (time) => {
     let exitdate = time !== null && time !== '' ? format(time, 'yyyy/MM/dd') : new Date();
@@ -99,4 +65,4 @@ const getPaymentType = (type) => {
         }
     }
 }
-export { convertToDecimal, minTwoDigits, isKeyDataEmpty, genPass, formatExitDateTime, round, uppercase, getPaymentType }
+export { convertToDecimal, minTwoDigits, isKeyDataEmpty, genPass, round, uppercase, getPaymentType }
