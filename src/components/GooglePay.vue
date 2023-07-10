@@ -1,13 +1,11 @@
 <template>
     <div>
-        <form id="payment-form">
-            <!-- <div id="apple-pay-button" style="-apple-pay-button-type: continue !important"></div> -->
-            <!-- <div id="card-container"></div> -->
-            <div id="google-pay-button" v-show="!gPayBtnLoading"></div>
-            <v-btn id="google-pay-button" color="black" elevation="20" :loading="gPayBtnLoading" v-show="gPayBtnLoading"
-                style="font-size: 18px; font-weight: 700;text-transform: none;" :width="width" :height="height"></v-btn>
-            <!-- <button id="card-button" type="button">Pay $1.00</button> -->
-        </form>
+        <!-- <div id="apple-pay-button" style="-apple-pay-button-type: continue !important"></div> -->
+        <!-- <div id="card-container"></div> -->
+        <div id="google-pay-button"  v-show="!gPayBtnLoading"></div>
+        <v-btn id="google-pay-button" color="black" elevation="20" :loading="gPayBtnLoading" v-show="gPayBtnLoading"
+            style="font-size: 18px; font-weight: 700;text-transform: none;" :width="width" :height="height"></v-btn>
+        <!-- <button id="card-button" type="button">Pay $1.00</button> -->
         <!-- <div id="payment-status-container"></div> -->
         <v-dialog v-model="alertDialog" persistent max-width="290">
             <v-card class="pa-0">
@@ -248,7 +246,7 @@ export default {
             const googlePay = await payments.googlePay(paymentRequest);
             // Note: You do not need to `attach` googlePay.
             const googlePayButtonOptions = {
-                buttonColor: 'default',
+                buttonColor: 'white',
                 buttonType: 'pay',
 
             }
@@ -322,11 +320,7 @@ export default {
     -apple-pay-button-style: black;
 }
 
-#payment-form {
-    max-width: 550px;
-    min-width: 300px;
-    margin: 15px auto;
-}
+
 
 .buyer-inputs {
     display: flex;
@@ -530,7 +524,8 @@ export default {
 }
 
 #google-pay-button {
-    color: white !important;
+    color: black !important;
+    background-color: white !important;
 }
 </style>
     

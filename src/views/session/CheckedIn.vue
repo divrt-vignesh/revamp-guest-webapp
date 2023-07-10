@@ -147,19 +147,19 @@
                         <v-card-actions class="text-center justify-center px-0 pb-0 pa-0 rounded-lg" v-if="Object.hasOwnProperty.call(bookingDetails, 'booking') &&
                             !showPaymentCardAdded
                             ">
-                            <v-container class="pa-0" fluid>
+                            <v-container class="pa-0" pa-0 fluid>
                                 <v-row no-gutters>
-                                    <v-col cols="12" 
+                                    <v-col cols="12" class="mb-5"
                                         v-if="iosDevice && Object.hasOwnProperty.call(bookingDetails, 'zone') && Object.hasOwnProperty.call(bookingDetails.zone, 'paymentServices') && Object.hasOwnProperty.call(bookingDetails.zone.paymentServices, 'apple_pay') && bookingDetails.zone.paymentServices.apple_pay == '1'">
                                         <apple-pay width='100%' height="43px"
                                             :ios-device="iosDevice && Object.hasOwnProperty.call(bookingDetails, 'zone') && Object.hasOwnProperty.call(bookingDetails.zone, 'paymentServices') && Object.hasOwnProperty.call(bookingDetails.zone.paymentServices, 'apple_pay') && bookingDetails.zone.paymentServices.apple_pay == '1'"></apple-pay>
                                     </v-col>
-                                    <v-col cols="12" 
+                                    <v-col cols="12" class="mb-5"
                                         v-if="!iosDevice && Object.hasOwnProperty.call(bookingDetails, 'zone') && Object.hasOwnProperty.call(bookingDetails.zone, 'paymentServices') && Object.hasOwnProperty.call(bookingDetails.zone.paymentServices, 'google_pay') && bookingDetails.zone.paymentServices.google_pay == '1'">
                                         <google-pay width="100%" height="43px"></google-pay>
                                     </v-col>
-                                    <v-col cols="12" >
-                                        <v-btn style="font-weight:700" elevation="20"  width="100%"
+                                    <v-col cols="12">
+                                        <v-btn style="font-weight:700" elevation="20" width="100%"
                                             class="add_credit_card_btn  mb-2" @click="navigateToAddPayment"> Add
                                             Credit
                                             Card</v-btn>
@@ -183,43 +183,43 @@
                                             hotel guest</v-btn>
 
                                     </v-col>
-                                    <v-col cols="12" class="mt-2 pa-0"
-                                        v-if="(bookingDetails.hasOwnProperty('booking') &&
-                                            bookingDetails.booking.hasOwnProperty('validated') &&
-                                            bookingDetails.booking.validated != '1' &&
-                                            bookingDetails.booking.isValidationEnabled == '1') || Object.hasOwnProperty.call(bookingDetails, 'zone') && Object.hasOwnProperty.call(bookingDetails.zone, 'isLoyaltySupported') && bookingDetails.zone.isLoyaltySupported == '1' && bookingDetails.booking.validated != '1' && (bookingDetails.booking.TypeOfBooking == 'Guest' || bookingDetails.booking.TypeOfBooking == 'Transient' || bookingDetails.booking.TypeOfBooking == 'Self reservation')">
-                                        <v-card flat color="#F4F4F4" class="ma-0 rounded-lg pb-5" tile max-width="100%">
-                                            <v-card-text class="pb-0">
-                                                <v-row class="text-center pt-0" no-gutters>
-                                                    <v-col cols="12" class="pa-0">
-                                                        <p style="font-size: 15px;color:#0000008C;font-weight: bolder;">
-                                                            CLAIM
-                                                            YOUR PARKING DISCOUNT</p>
-                                                    </v-col>
-                                                    <v-col cols="12"
-                                                        v-if="Object.hasOwnProperty.call(bookingDetails, 'zone') && Object.hasOwnProperty.call(bookingDetails.zone, 'isLoyaltySupported') && bookingDetails.zone.isLoyaltySupported == '1' && bookingDetails.booking.validated != '1' && (bookingDetails.booking.TypeOfBooking == 'Guest' || bookingDetails.booking.TypeOfBooking == 'Transient' || bookingDetails.booking.TypeOfBooking == 'Self reservation')">
-                                                        <v-btn color="black" rounded class="pa-0 ma-0" width="230"
-                                                            height="50" elevation="20" @click="loyalty = true">
-                                                            <v-img src="@/assets/newGoldenNugget.jpg"
-                                                                style="border-radius: 1.2rem;" class max-width="230"
-                                                                height="60"></v-img>
-                                                        </v-btn>
-                                                    </v-col>
-                                                </v-row>
-                                                <v-col cols="12" class="mt-1 px-4" v-show="bookingDetails.hasOwnProperty('booking') &&
-                                                    bookingDetails.booking.hasOwnProperty('validated') &&
-                                                    bookingDetails.booking.validated != '1' &&
-                                                    bookingDetails.booking.isValidationEnabled == '1'
-                                                    ">
-                                                    <v-btn text style="font-size:15px;text-transform: none;" color="#3D4C56
-" class="no-upper-case" @click="openValidationDialog()">Apply
-                                                        Your Validation</v-btn>
-                                                </v-col>
-                                            </v-card-text>
-                                        </v-card>
-                                    </v-col>
-                                </v-row>
 
+                                </v-row>
+                                <v-col cols="12" class="mt-2 pa-0"
+                                    v-if="(bookingDetails.hasOwnProperty('booking') &&
+                                        bookingDetails.booking.hasOwnProperty('validated') &&
+                                        bookingDetails.booking.validated != '1' &&
+                                        bookingDetails.booking.isValidationEnabled == '1') || Object.hasOwnProperty.call(bookingDetails, 'zone') && Object.hasOwnProperty.call(bookingDetails.zone, 'isLoyaltySupported') && bookingDetails.zone.isLoyaltySupported == '1' && bookingDetails.booking.validated != '1' && (bookingDetails.booking.TypeOfBooking == 'Guest' || bookingDetails.booking.TypeOfBooking == 'Transient' || bookingDetails.booking.TypeOfBooking == 'Self reservation')">
+                                    <v-card flat color="#F4F4F4" class="ma-0 rounded-lg pb-5" tile max-width="100%">
+                                        <v-card-text class="pb-0">
+                                            <v-row class="text-center pt-0" no-gutters>
+                                                <v-col cols="12" class="pa-0">
+                                                    <p style="font-size: 15px;color:#0000008C;font-weight: bolder;">
+                                                        CLAIM
+                                                        YOUR PARKING DISCOUNT</p>
+                                                </v-col>
+                                                <v-col cols="12"
+                                                    v-if="Object.hasOwnProperty.call(bookingDetails, 'zone') && Object.hasOwnProperty.call(bookingDetails.zone, 'isLoyaltySupported') && bookingDetails.zone.isLoyaltySupported == '1' && bookingDetails.booking.validated != '1' && (bookingDetails.booking.TypeOfBooking == 'Guest' || bookingDetails.booking.TypeOfBooking == 'Transient' || bookingDetails.booking.TypeOfBooking == 'Self reservation')">
+                                                    <v-btn color="black" rounded class="pa-0 ma-0" width="230" height="50"
+                                                        elevation="20" @click="loyalty = true">
+                                                        <v-img src="@/assets/newGoldenNugget.jpg"
+                                                            style="border-radius: 1.2rem;" class max-width="230"
+                                                            height="60"></v-img>
+                                                    </v-btn>
+                                                </v-col>
+                                            </v-row>
+                                            <v-col cols="12" class="mt-1 px-4" v-show="bookingDetails.hasOwnProperty('booking') &&
+                                                bookingDetails.booking.hasOwnProperty('validated') &&
+                                                bookingDetails.booking.validated != '1' &&
+                                                bookingDetails.booking.isValidationEnabled == '1'
+                                                ">
+                                                <v-btn text style="font-size:15px;text-transform: none;" color="#3D4C56
+" class="no-upper-case" @click="openValidationDialog()">Apply
+                                                    Your Validation</v-btn>
+                                            </v-col>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-col>
                             </v-container>
                         </v-card-actions>
                     </v-card-text>

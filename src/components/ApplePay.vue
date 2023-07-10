@@ -1,15 +1,12 @@
 <template>
     <div>
-        <form id="payment-form">
-            <!-- <div id="apple-pay-button" style="-apple-pay-button-type: continue !important"></div> -->
-            <!-- <div id="card-container"></div> -->
-            <v-btn id="card-button" color="black" elevation="20"
-                style="font-size: 18px; font-weight: 700;text-transform: none;" :width="width" :height="height"
-                v-if="iosDevice"> <span class="white--text">Pay with </span> <v-icon color="white">mdi-apple</v-icon><span
-                    class="white--text">
-                    Pay</span></v-btn>
-            <!-- <button id="card-button" type="button">Pay $1.00</button> -->
-        </form>
+        <div id="apple-pay-button" ></div>
+        <!-- <div id="card-container"></div> -->
+        <v-btn id="card-button" color="black" elevation="20" style="font-size: 18px; font-weight: 700;text-transform: none;"
+            :width="width" :height="height" v-if="iosDevice"> <span class="white--text">Pay with </span> <v-icon
+                color="white">mdi-apple</v-icon><span class="white--text">
+                Pay</span></v-btn>
+        <!-- <button id="card-button" type="button">Pay $1.00</button> -->
         <!-- <div id="payment-status-container"></div> -->
         <v-dialog v-model="alertDialog" persistent max-width="290">
             <v-card class="pa-0">
