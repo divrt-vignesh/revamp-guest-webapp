@@ -120,7 +120,9 @@
                 </v-container>
             </div>
             <v-container fluid class="text-center px-10" elevation="20">
-                <v-card style="border-radius: 10px;">
+                <v-card
+                class="dialog-card"
+                   >
                     <v-card-text v-if="bookingDetails.hasOwnProperty('booking') &&
                         bookingDetails.booking.hasOwnProperty('TypeOfBooking') &&
                         bookingDetails.booking.TypeOfBooking != 'Self reservation'">
@@ -172,10 +174,10 @@
                                         duration of stay.
                                     </p>
                                 </v-col> -->
-                                    <v-col cols="12" class="mt-4 pb-2 text-center"
+                                    <v-col cols="12" class="mt-4 pb-2"
                                         v-if="bookingDetails.zone.isPQREndReservation == 1 && (bookingDetails.booking.TypeOfBooking == 'Guest' || bookingDetails.booking.TypeOfBooking == 'Transient')">
-                                        <v-btn text color="primary"
-                                            style="font-size: 13px;font-weight: bolder;text-decoration: underline;"
+                                        <v-btn text color="primary" width="100%"
+                                            style="font-size: 12px;font-weight: bolder;text-decoration: underline;"
                                             @click="hotelGuest">
                                             <font-awesome-icon class="mr-1" icon="fa-solid fa-hotel"
                                                 style="font-size: 1.5rem; color: #1E3050;" /> I am an

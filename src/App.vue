@@ -331,7 +331,17 @@ input {
     opacity: 1;
   }
 }
-.add_credit_card_btn{
+
+.add_credit_card_btn {
   color: #FDAE33;
 }
-</style>
+
+.dialog-card {
+  border-radius: 10px;
+  overflow-x: hidden !important;
+  overflow-y: scroll !important;
+  -webkit-scrollbar: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  max-height: 500px;
+}</style>
