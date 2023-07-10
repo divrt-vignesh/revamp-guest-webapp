@@ -69,7 +69,17 @@ const secondsToHms = (timeDifference) => {
      * @method secondsToDHms returns the duration (sec) in hrs and min.
      * @param timeDifference duration in seconds
      */
-const secondsToDHms = (timeDifference) => {
+const secondsToMs = (timeDifference) => {
+    var d = Number(timeDifference);
+    var m = Math.floor(d  / 60);
+    var mDisplay = m > 0 ? m + (m == 1 ? " min " : " min") : " 0 min";
+    return mDisplay;
+}
+/**
+     * @method secondsToDHms returns the duration (sec) in hrs and min.
+     * @param timeDifference duration in seconds
+     */
+const secondsToDHms = (timeDifference, type) => {
     var td = Number(timeDifference);
     var d = Math.floor(td / (3600 * 24));
     var h = Math.floor(td / 3600);
@@ -78,8 +88,9 @@ const secondsToDHms = (timeDifference) => {
     h = d > 0 ? Math.floor(td / 3600) % 24 : h;
     var hDisplay = h > 0 ? h + " h " : "";
     var mDisplay = m > 0 ? m + (m == 1 ? " min " : " mins") : " 0 min";
-    return dDisplay + hDisplay + mDisplay;
+    return type == 'array' ? [dDisplay, hDisplay, mDisplay] : dDisplay + hDisplay + mDisplay;
 }
+
 
 const secondsToDateHrMnts = (timeDifference) => {
     var value = Number(timeDifference);
@@ -192,7 +203,7 @@ const formatDateTime = (time, val) => {
             case 'checkin': {
                 return formatHr + ":" + min + " " + ampm + ' on ' + month + " " + date
             }
-            case 'booking_content':{
+            case 'booking_content': {
                 return [formatHr + ":" + min + " " + ampm, month, date];
             }
             default: {
@@ -203,5 +214,5 @@ const formatDateTime = (time, val) => {
     //Jan 27, 01:59 PM
 }
 
-export { timeStampToDate, secondsToHms, secondsToDHms, formatUTC, formatAMPMTo24Time, format24TimeToAMPM, formatDateToAPIFormat, dateToTimeZoneDate, formatUnixToDate, utcToDate, formatDateTimeToAMPM, formatDateToStandardStr, secondsToDateHrMnts, formatDateTime }
+export { timeStampToDate, secondsToHms, secondsToMs, secondsToDHms, formatUTC, formatAMPMTo24Time, format24TimeToAMPM, formatDateToAPIFormat, dateToTimeZoneDate, formatUnixToDate, utcToDate, formatDateTimeToAMPM, formatDateToStandardStr, secondsToDateHrMnts, formatDateTime }
 

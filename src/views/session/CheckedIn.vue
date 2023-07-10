@@ -7,11 +7,11 @@
         </v-dialog>
         <boiler-plate>
             <div class="timing-values">
-                <v-container pa-0 class="text-center">
+                <v-container pa-0>
                     <v-row no-gutters class="parking-time">
                         <v-col cols="12" class=" pb-0">
                             <v-container pl-10>
-                                <v-row align="center" class="mx-0 pb-0" no-gutters v-if="bookingDetails.hasOwnProperty('booking') &&
+                                <v-row class="mx-0 pb-0" no-gutters v-if="bookingDetails.hasOwnProperty('booking') &&
                                     bookingDetails.booking.hasOwnProperty('TypeOfBooking') &&
                                     bookingDetails.booking.TypeOfBooking != 'Self reservation'">
                                     <v-col cols="10" class="pl-1">
@@ -21,12 +21,21 @@
                                                     timeAgo == '' ||
                                                     timeAgo == null
                                                     " height="40px" max-width="200" type="heading"></v-skeleton-loader>
-                                                <span v-show="!(validatedDateTime > 0)" style="font-size: 30px;">{{
-                                                    timeAgo
-                                                }}</span>
-                                                {{ hours }}
-                                                {{ days }}
-                                                {{ mins }}
+                                                <p v-show="!(validatedDateTime > 0)">
+                                                    <span style="font-size: 50px;font-weight: 700;">{{
+                                                        timeAgo.split('min')[0] }}</span><span style="font-size: 36px;">{{
+        timeAgo.split('min')[0] == '1' ||
+        timeAgo.split('min')[0] == '0' ? 'Minute' : 'Minutes'
+    }}</span>
+                                                    <!-- <span style="font-size:96px;font-weight: 700;">{{ hours }} <span
+                                                            style="font-size: 36px;font-weight: 400; "
+                                                            v-if="hours !== ''">{{ hours == 1 ? 'Hour' :
+                                                                'Hours' }}</span></span>
+                                                    <span style="font-size:96px;font-weight: 700;"> {{ mins }} <span
+                                                            style="font-size: 36px;font-weight: 400; "
+                                                            v-if="mins !== ''">{{ mins == '1' ? 'Minute' : 'Minutes'
+                                                            }}</span></span> -->
+                                                </p>
                                                 <!-- <span
                           class="grey--text text--darken-1 time_ago"
                           v-show="gracePeriodTime > 0"
@@ -38,10 +47,10 @@
                                                     validatedDateTime > 0
                                                     ">{{ countDownValidatedTime }}</span>
                                             </v-col>
-                                            <v-col cols="12" v-if="bookingDetails.hasOwnProperty('booking') &&
+                                            <v-col cols="12" style="margin-top: -60px;" v-if="bookingDetails.hasOwnProperty('booking') &&
                                                 validatedDateTime <= 0
                                                 ">
-                                                <span>Parked</span>
+                                                <span style="font-size:36px;">Parked</span>
                                             </v-col>
                                             <!-- <v-col cols="12" v-else-if="bookingDetails.hasOwnProperty('booking') && gracePeriodTime > 0">
                         <span class="grey--text text--darken-1 time_ago_context"
@@ -86,13 +95,35 @@
                                      </v-col> -->
                                 </v-row>
                             </v-container>
+                            <v-row no-gutters align="center" class="my-1">
+                                <v-col cols="12" class="pa-0 align-self-center text-center">
+                                    <v-btn class="elevation-0 white--text" tile x-small color="green darken-2" v-show="bookingDetails.hasOwnProperty('booking') &&
+                                            bookingDetails.booking.hasOwnProperty('validated') &&
+                                            bookingDetails.booking.validated == '1'
+                                            ">VALIDATED</v-btn>
+                                    <!-- <v-icon color="red" class="ml-2" v-show="(bookingDetails.hasOwnProperty('booking') && bookingDetails.booking.validated == '1' && showPaymentCardAdded == '1')" >approval</v-icon> -->
+                                </v-col>
+                            </v-row>
+                            <v-row class="justify-center mb-3" no-gutters v-show="Object.hasOwnProperty.call(bookingDetails, 'zone') &&
+                                !(bookingDetails.zone.isGated == '0')
+                                ">
+                                <span class="grey--text text--darken-1 font-weight-bold"
+                                    v-if="showPaymentCardAdded && (isCheckoutEnabled(1) || isCheckoutEnabled(2) || isCheckoutEnabled(3))">Click
+                                    an option below to exit</span>
+                            </v-row>
+                            <v-row class="justify-center my-3" no-gutters
+                                v-show="!(isCheckoutEnabled(1) || isCheckoutEnabled(2) || isCheckoutEnabled(3))">
+                                <span class="black--text text--darken-1 font-weight-bold text-h5">Checked In</span>
+                            </v-row>
                         </v-col>
                     </v-row>
                 </v-container>
             </div>
             <v-container fluid class="text-center px-10" elevation="20">
                 <v-card style="border-radius: 10px;">
-                    <v-card-text>
+                    <v-card-text v-if="bookingDetails.hasOwnProperty('booking') &&
+                        bookingDetails.booking.hasOwnProperty('TypeOfBooking') &&
+                        bookingDetails.booking.TypeOfBooking != 'Self reservation'">
                         <v-container>
                             <v-form>
                                 <v-row no-gutters>
@@ -113,11 +144,124 @@
                             </v-form>
 
                         </v-container>
+                        <v-card-actions class="text-center justify-center px-0 pb-0 pa-0 rounded-lg" v-if="Object.hasOwnProperty.call(bookingDetails, 'booking') &&
+                            !showPaymentCardAdded
+                            ">
+                            <v-container class="pa-0" fluid>
+                                <v-row no-gutters>
+                                    <v-col cols="12" 
+                                        v-if="iosDevice && Object.hasOwnProperty.call(bookingDetails, 'zone') && Object.hasOwnProperty.call(bookingDetails.zone, 'paymentServices') && Object.hasOwnProperty.call(bookingDetails.zone.paymentServices, 'apple_pay') && bookingDetails.zone.paymentServices.apple_pay == '1'">
+                                        <apple-pay width='100%' height="43px"
+                                            :ios-device="iosDevice && Object.hasOwnProperty.call(bookingDetails, 'zone') && Object.hasOwnProperty.call(bookingDetails.zone, 'paymentServices') && Object.hasOwnProperty.call(bookingDetails.zone.paymentServices, 'apple_pay') && bookingDetails.zone.paymentServices.apple_pay == '1'"></apple-pay>
+                                    </v-col>
+                                    <v-col cols="12" 
+                                        v-if="!iosDevice && Object.hasOwnProperty.call(bookingDetails, 'zone') && Object.hasOwnProperty.call(bookingDetails.zone, 'paymentServices') && Object.hasOwnProperty.call(bookingDetails.zone.paymentServices, 'google_pay') && bookingDetails.zone.paymentServices.google_pay == '1'">
+                                        <google-pay width="100%" height="43px"></google-pay>
+                                    </v-col>
+                                    <v-col cols="12" >
+                                        <v-btn style="font-weight:700" elevation="20"  width="100%"
+                                            class="add_credit_card_btn  mb-2" @click="navigateToAddPayment"> Add
+                                            Credit
+                                            Card</v-btn>
+                                    </v-col>
+                                    <!-- <v-col cols="12" class="px-4 mt-4 color-black text-center" style="font-size: 12px"
+                                    v-show="iosDevice">
+                                    <p>
+                                        You're only authorizing payment now. We'll charge you automatically when you
+                                        checkout based on the
+                                        duration of stay.
+                                    </p>
+                                </v-col> -->
+                                    <v-col cols="12" class="mt-4 pb-2 text-center"
+                                        v-if="bookingDetails.zone.isPQREndReservation == 1 && (bookingDetails.booking.TypeOfBooking == 'Guest' || bookingDetails.booking.TypeOfBooking == 'Transient')">
+                                        <v-btn text color="primary"
+                                            style="font-size: 13px;font-weight: bolder;text-decoration: underline;"
+                                            @click="hotelGuest">
+                                            <font-awesome-icon class="mr-1" icon="fa-solid fa-hotel"
+                                                style="font-size: 1.5rem; color: #1E3050;" /> I am an
+                                            overnight
+                                            hotel guest</v-btn>
 
+                                    </v-col>
+                                    <v-col cols="12" class="mt-2 pa-0"
+                                        v-if="(bookingDetails.hasOwnProperty('booking') &&
+                                            bookingDetails.booking.hasOwnProperty('validated') &&
+                                            bookingDetails.booking.validated != '1' &&
+                                            bookingDetails.booking.isValidationEnabled == '1') || Object.hasOwnProperty.call(bookingDetails, 'zone') && Object.hasOwnProperty.call(bookingDetails.zone, 'isLoyaltySupported') && bookingDetails.zone.isLoyaltySupported == '1' && bookingDetails.booking.validated != '1' && (bookingDetails.booking.TypeOfBooking == 'Guest' || bookingDetails.booking.TypeOfBooking == 'Transient' || bookingDetails.booking.TypeOfBooking == 'Self reservation')">
+                                        <v-card flat color="#F4F4F4" class="ma-0 rounded-lg pb-5" tile max-width="100%">
+                                            <v-card-text class="pb-0">
+                                                <v-row class="text-center pt-0" no-gutters>
+                                                    <v-col cols="12" class="pa-0">
+                                                        <p style="font-size: 15px;color:#0000008C;font-weight: bolder;">
+                                                            CLAIM
+                                                            YOUR PARKING DISCOUNT</p>
+                                                    </v-col>
+                                                    <v-col cols="12"
+                                                        v-if="Object.hasOwnProperty.call(bookingDetails, 'zone') && Object.hasOwnProperty.call(bookingDetails.zone, 'isLoyaltySupported') && bookingDetails.zone.isLoyaltySupported == '1' && bookingDetails.booking.validated != '1' && (bookingDetails.booking.TypeOfBooking == 'Guest' || bookingDetails.booking.TypeOfBooking == 'Transient' || bookingDetails.booking.TypeOfBooking == 'Self reservation')">
+                                                        <v-btn color="black" rounded class="pa-0 ma-0" width="230"
+                                                            height="50" elevation="20" @click="loyalty = true">
+                                                            <v-img src="@/assets/newGoldenNugget.jpg"
+                                                                style="border-radius: 1.2rem;" class max-width="230"
+                                                                height="60"></v-img>
+                                                        </v-btn>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-col cols="12" class="mt-1 px-4" v-show="bookingDetails.hasOwnProperty('booking') &&
+                                                    bookingDetails.booking.hasOwnProperty('validated') &&
+                                                    bookingDetails.booking.validated != '1' &&
+                                                    bookingDetails.booking.isValidationEnabled == '1'
+                                                    ">
+                                                    <v-btn text style="font-size:15px;text-transform: none;" color="#3D4C56
+" class="no-upper-case" @click="openValidationDialog()">Apply
+                                                        Your Validation</v-btn>
+                                                </v-col>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
+                                </v-row>
+
+                            </v-container>
+                        </v-card-actions>
                     </v-card-text>
                 </v-card>
             </v-container>
-
+            <footer>
+                <v-row class="text-center parking.com pb-3 px-5" no-gutters>
+                    <v-col cols="12" class="mt-4 text-center color-black px-4" style="font-size: 12px;" v-show="Object.hasOwnProperty.call(bookingDetails, 'zone') &&
+                        !(bookingDetails.zone.isGated == '0')
+                        ">
+                        <p>
+                            You won't be able to exit the garage until your payment method is on file.
+                            Please
+                            enter your payment method now to avoid slow down at exit.
+                        </p>
+                    </v-col>
+                    <v-col cols="12" class="mt-4 text-center color-black px-4" style="font-size: 12px" v-show="Object.hasOwnProperty.call(bookingDetails, 'zone') &&
+                        !(bookingDetails.zone.isGated == '1') &&
+                        validatedDateTime <= 0
+                        ">
+                        <p>
+                            A valid credit card is required to park. Without one, you
+                            could be subject to a parking violation and issued a
+                            citation.
+                        </p>
+                    </v-col>
+                    <v-col cols="12" class="mt-4 color-black  text-center px-4" style="font-size: 10px" v-show="bookingDetails.hasOwnProperty('booking') &&
+                        bookingDetails.booking.hasOwnProperty('validated') &&
+                        bookingDetails.booking.validated == '1' &&
+                        validatedDateTime > 0
+                        ">
+                        <p>
+                            Exiting after the validated time period will require a valid
+                            credit card to continue parking. Without one, you could be
+                            subject to a parking violation and issued a citation.
+                        </p>
+                    </v-col>
+                    <v-col cols="12">
+                        <v-img alt="PARKING.COM" class="my-3" height="42" contain src="@/assets/logo_huge_drk.png" />
+                    </v-col>
+                </v-row>
+            </footer>
         </boiler-plate>
     </v-container>
 </template>
@@ -129,17 +273,21 @@ import APIHelper from "@/apiHelper";
 import "primevue/resources/themes/saga-blue/theme.css"       //theme
 import "primevue/resources/primevue.min.css"                 //core css
 import "primeicons/primeicons.css"
-// import GooglePay from "./GooglePay.vue";
+import GooglePay from "@/components/GooglePay.vue";
 // import loggerHelper from "../loggerHelper";
 import { mapGetters } from "vuex";
 // import { QrcodeStream } from "vue-qrcode-reader";
 // import QrCodeScanner from "@/views/QrCodeScanner.vue";
 // import ValidationQrCodeScanner from "@/views/ValidationQrCodeScanner.vue";
-// import ApplePay from "@/views/ApplePay.vue";
+import ApplePay from "@/components/ApplePay.vue";
 import { round } from '@/utils/util'
 import { formatDateTime } from "@/utils/formatDateTime";
 import { EventBus } from "@/lib/EventBus";
-import { secondsToHms, secondsToDHms } from "@/utils/formatDateTime";
+import {
+    secondsToMs,
+    secondsToHms,
+    //  secondsToDHms
+} from "@/utils/formatDateTime";
 import { addMinutes, addDays, addHours, set } from "date-fns";
 import { format, isValid } from "date-fns";
 import { dateToTimeZoneDate } from "@/utils/formatDateTime";
@@ -149,8 +297,8 @@ export default {
     components: {
         // QrCodeScanner,
         //  ValidationQrCodeScanner,
-        //   ApplePay,
-        //    GooglePay,
+        ApplePay,
+        GooglePay,
         // Calendar,
         //  Estimate 
         BoilerPlate
@@ -309,52 +457,34 @@ export default {
             return state;
         },
         days() {
-            if (this.timeAgo !== null && this.timeAgo !== '') {
-                if (this.timeAgo.includes('days')) {
-                    return this.timeAgo.split('days')[0]
-                }
-                else if (this.timeAgo.includes('day')) {
-                    return this.timeAgo.split('day')[0]
-                }
-                else {
-                    return ""
-                }
+            if (this.timeAgo[0] !== '' && this.timeAgo[0] != null && this.timeAgo[0] !== undefined) {
+                return this.timeAgo[0]
             }
-            return "";
-
+            return '';
         },
         hours() {
-            if (this.timeAgo !== null && this.timeAgo !== '') {
-                if (this.timeAgo.includes('days')) {
-                    let days = this.timeAgo.split('days')
-                    return days[1].split('h')[0]
-                }
-                else if (this.timeAgo.includes('day')) {
-                    let days = this.timeAgo.split('day')
-                    return days[1].split('h')[0]
-                }
-                else {
-                    return this.timeAgo.split('h')[0];
-                }
+            // if (this.bookingDetails?.booking?.TypeOfBooking !== 'Self reservation') {
+            //     return this.timeAgo.includes('h') ? this.timeAgo.split('h')[0] : ''
+            // }
+            // else {
+            if (this.timeAgo[1] !== '' && this.timeAgo[1] != null && this.timeAgo[1] !== undefined) {
+                return this.timeAgo[1]
             }
-            return ""
+            // }
+            return '';
         },
         mins() {
-            if (this.timeAgo !== null && this.timeAgo !== '') {
-            if (this.timeAgo.includes('days')) {
-                let days = this.timeAgo.split('days')
-                console.log(days[1].split('mins')[0])
-                return days[1].split('mins')[0]
+            // if (this.bookingDetails?.booking?.TypeOfBooking !== 'Self reservatiion') {
+            //     let h = this.timeAgo.includes('h') ? this.timeAgo.split('h')[1] : this.timeAgo;
+            //     return h.split('min')[0]
+            // }
+
+            // else {
+            if (this.timeAgo[2] !== '' && this.timeAgo[2] != null && this.timeAgo[2] !== undefined) {
+                return this.timeAgo[2].includes('mins') ? [this.timeAgo[2].split('mins')[0], 'mins'] : [this.timeAgo[2].split('min')[0], 'min']
             }
-            else if (this.timeAgo.includes('day')) {
-                let days = this.timeAgo.split('day')
-                return days[1].split('h')[0]
-            }
-            else {
-                return ""
-            }
-        }
-        return "";
+            // }
+            return '';
         },
 
         timeAgo: function getTimeAgo() {
@@ -994,7 +1124,7 @@ export default {
                 gracePeriod > 0
                     ? currentTime.getTime() - parkingStartTime * 1000 // - gracePeriod * 1000 to exclude grace period
                     : currentTime.getTime() - parkingStartTime * 1000;
-            let parkedTime = secondsToDHms(differenceTime / 1000);
+            let parkedTime = secondsToMs(differenceTime / 1000);
             return parkedTime;
         },
         isCheckoutEnabled(type) {
@@ -1409,6 +1539,6 @@ export default {
 .timing-values {
     color: white;
     font-size: 52px;
-    padding: 50px;
+
 }
 </style>

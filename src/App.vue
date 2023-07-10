@@ -331,4 +331,7 @@ input {
     opacity: 1;
   }
 }
+.add_credit_card_btn{
+  color: #FDAE33;
+}
 </style>
