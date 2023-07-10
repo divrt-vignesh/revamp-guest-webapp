@@ -120,9 +120,7 @@
                 </v-container>
             </div>
             <v-container fluid class="text-center px-10" elevation="20">
-                <v-card
-                class="dialog-card"
-                   >
+                <v-card class="dialog-card">
                     <v-card-text v-if="bookingDetails.hasOwnProperty('booking') &&
                         bookingDetails.booking.hasOwnProperty('TypeOfBooking') &&
                         bookingDetails.booking.TypeOfBooking != 'Self reservation'">
@@ -151,6 +149,12 @@
                             ">
                             <v-container class="pa-0" pa-0 fluid>
                                 <v-row no-gutters>
+                                    <v-col cols="12">
+                                        <v-btn elevation="20" width="100%" height="43px" class="add_credit_card_btn mb-5"
+                                            @click="navigateToAddPayment"> Add
+                                            Credit
+                                            Card</v-btn>
+                                    </v-col>
                                     <v-col cols="12" class="mb-5"
                                         v-if="iosDevice && Object.hasOwnProperty.call(bookingDetails, 'zone') && Object.hasOwnProperty.call(bookingDetails.zone, 'paymentServices') && Object.hasOwnProperty.call(bookingDetails.zone.paymentServices, 'apple_pay') && bookingDetails.zone.paymentServices.apple_pay == '1'">
                                         <apple-pay width='100%' height="43px"
@@ -159,12 +163,6 @@
                                     <v-col cols="12" class="mb-5"
                                         v-if="!iosDevice && Object.hasOwnProperty.call(bookingDetails, 'zone') && Object.hasOwnProperty.call(bookingDetails.zone, 'paymentServices') && Object.hasOwnProperty.call(bookingDetails.zone.paymentServices, 'google_pay') && bookingDetails.zone.paymentServices.google_pay == '1'">
                                         <google-pay width="100%" height="43px"></google-pay>
-                                    </v-col>
-                                    <v-col cols="12">
-                                        <v-btn style="font-weight:700" elevation="20" width="100%"
-                                            class="add_credit_card_btn  mb-2" @click="navigateToAddPayment"> Add
-                                            Credit
-                                            Card</v-btn>
                                     </v-col>
                                     <!-- <v-col cols="12" class="px-4 mt-4 color-black text-center" style="font-size: 12px"
                                     v-show="iosDevice">
@@ -192,7 +190,7 @@
                                         bookingDetails.booking.hasOwnProperty('validated') &&
                                         bookingDetails.booking.validated != '1' &&
                                         bookingDetails.booking.isValidationEnabled == '1') || Object.hasOwnProperty.call(bookingDetails, 'zone') && Object.hasOwnProperty.call(bookingDetails.zone, 'isLoyaltySupported') && bookingDetails.zone.isLoyaltySupported == '1' && bookingDetails.booking.validated != '1' && (bookingDetails.booking.TypeOfBooking == 'Guest' || bookingDetails.booking.TypeOfBooking == 'Transient' || bookingDetails.booking.TypeOfBooking == 'Self reservation')">
-                                    <v-card flat color="#F4F4F4" class="ma-0 rounded-lg pb-5" tile max-width="100%">
+                                    <v-card flat color="#F4F4F4" class="ma-0 rounded-lg " tile max-width="100%" >
                                         <v-card-text class="pb-0">
                                             <v-row class="text-center pt-0" no-gutters>
                                                 <v-col cols="12" class="pa-0">
@@ -215,7 +213,7 @@
                                                 bookingDetails.booking.validated != '1' &&
                                                 bookingDetails.booking.isValidationEnabled == '1'
                                                 ">
-                                                <v-btn text style="font-size:15px;text-transform: none;" color="#3D4C56
+                                                <v-btn text style="font-size:15px;text-transform: none;text-decoration: underline;" color="#3D4C56
 " class="no-upper-case" @click="openValidationDialog()">Apply
                                                     Your Validation</v-btn>
                                             </v-col>

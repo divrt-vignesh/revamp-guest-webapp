@@ -333,7 +333,13 @@ input {
 }
 
 .add_credit_card_btn {
-  color: #FDAE33;
+  background-color: #FDAE33 !important;
+  border-radius: 10px !important;
+  height: 43px;
+  text-transform: none;
+  font-weight: 400px;
+  font-size: 16px;
+
 }
 
 .dialog-card {
@@ -343,5 +349,5 @@ input {
   -webkit-scrollbar: none;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  max-height: 500px;
+  max-height: 480px;
 }</style>

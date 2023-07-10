@@ -2,11 +2,11 @@
     <div>
         <!-- <div id="apple-pay-button" ></div> -->
         <!-- <div id="card-container"></div> -->
-        <!-- <v-btn id="card-button" color="black" elevation="20" style="font-size: 18px; font-weight: 700;text-transform: none;"
-            :width="width" :height="height" v-if="iosDevice"> <span class="white--text">Pay with </span> <v-icon
-                color="white">mdi-apple</v-icon><span class="white--text">
-                Pay</span></v-btn> -->
-        <apple-pay-button id="card-button" buttonstyle="black" type="buy" locale="el-GR"></apple-pay-button>
+        <v-btn id="card-button" color="white" elevation="20" :width="width" :height="height" v-if="iosDevice" style="border: 1px solid black !important;"> <span
+                class="black--text">Pay with </span> <v-icon color="black">mdi-apple</v-icon><span class="black--text"
+                style="font-weight: 700;">
+                Pay</span></v-btn>
+        <!-- <button id="card-button" type="button">Pay $1.00</button> -->
         <!-- <div id="payment-status-container"></div> -->
         <v-dialog v-model="alertDialog" persistent max-width="290">
             <v-card class="pa-0">
@@ -30,7 +30,7 @@
         </v-dialog>
     </div>
 </template>
-<script src="https://applepay.cdn-apple.com/jsapi/v1/apple-pay-sdk.js"></script>
+  
 <script>
 import APIHelper from "../apiHelper";
 // import loggerHelper from "../loggerHelper";
@@ -117,7 +117,7 @@ export default {
                 console.log("Clicked");
                 await self.handlePaymentMethodSubmission(event, applePay);
             });
-            await applePayButton.attach('#apple-pay-button')
+            // await applePayButton.attach('#apple-pay-button',)
         }
         // });
     },
@@ -316,6 +316,13 @@ export default {
 };
 </script>
 <style lang="less">
+#card-button {
+    font-size: 16px;
+    font-weight: 400;
+    text-transform: none;
+    border-radius: 10px;
+}
+
 #apple-pay-button {
     height: 48px;
     width: 100%;

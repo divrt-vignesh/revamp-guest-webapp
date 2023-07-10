@@ -2,7 +2,7 @@
     <div>
         <!-- <div id="apple-pay-button" style="-apple-pay-button-type: continue !important"></div> -->
         <!-- <div id="card-container"></div> -->
-        <div id="google-pay-button"  v-show="!gPayBtnLoading"></div>
+        <div id="google-pay-button" v-show="!gPayBtnLoading"></div>
         <v-btn id="google-pay-button" color="black" elevation="20" :loading="gPayBtnLoading" v-show="gPayBtnLoading"
             style="font-size: 18px; font-weight: 700;text-transform: none;" :width="width" :height="height"></v-btn>
         <!-- <button id="card-button" type="button">Pay $1.00</button> -->
@@ -392,6 +392,8 @@ export default {
     height: 43px !important;
     z-index: 20 !important;
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
+    border-radius: 10px !important;
+    border: 1px solid black !important;
 }
 
 // h3 {
@@ -526,6 +528,9 @@ export default {
 #google-pay-button {
     color: black !important;
     background-color: white !important;
+    border-radius: 10px !important;
+    border: 1px solid black !important;
+
 }
 </style>
     
