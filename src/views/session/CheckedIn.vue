@@ -95,13 +95,13 @@
                                      </v-col> -->
                                 </v-row>
                             </v-container>
-                            <v-row no-gutters align="center" class="my-1">
+                            <!-- <v-row no-gutters align="center" class="my-1">
                                 <v-col cols="12" class="pa-0 align-self-center text-center">
                                     <v-btn class="elevation-0 white--text" tile x-small color="green darken-2" v-show="bookingDetails.hasOwnProperty('booking') &&
                                             bookingDetails.booking.hasOwnProperty('validated') &&
                                             bookingDetails.booking.validated == '1'
                                             ">VALIDATED</v-btn>
-                                    <!-- <v-icon color="red" class="ml-2" v-show="(bookingDetails.hasOwnProperty('booking') && bookingDetails.booking.validated == '1' && showPaymentCardAdded == '1')" >approval</v-icon> -->
+                                    <v-icon color="red" class="ml-2" v-show="(bookingDetails.hasOwnProperty('booking') && bookingDetails.booking.validated == '1' && showPaymentCardAdded == '1')" >approval</v-icon>
                                 </v-col>
                             </v-row>
                             <v-row class="justify-center mb-3" no-gutters v-show="Object.hasOwnProperty.call(bookingDetails, 'zone') &&
@@ -114,7 +114,7 @@
                             <v-row class="justify-center my-3" no-gutters
                                 v-show="!(isCheckoutEnabled(1) || isCheckoutEnabled(2) || isCheckoutEnabled(3))">
                                 <span class="black--text text--darken-1 font-weight-bold text-h5">Checked In</span>
-                            </v-row>
+                            </v-row> -->
                         </v-col>
                     </v-row>
                 </v-container>
@@ -122,8 +122,8 @@
             <v-container fluid class="text-center px-10" elevation="20">
                 <v-card class="dialog-card">
                     <v-card-text v-if="bookingDetails.hasOwnProperty('booking') &&
-                        bookingDetails.booking.hasOwnProperty('TypeOfBooking') &&
-                        bookingDetails.booking.TypeOfBooking != 'Self reservation'">
+                            bookingDetails.booking.hasOwnProperty('TypeOfBooking') &&
+                            bookingDetails.booking.TypeOfBooking != 'Self reservation'">
                         <v-container>
                             <v-form>
                                 <v-row no-gutters>
@@ -190,7 +190,7 @@
                                         bookingDetails.booking.hasOwnProperty('validated') &&
                                         bookingDetails.booking.validated != '1' &&
                                         bookingDetails.booking.isValidationEnabled == '1') || Object.hasOwnProperty.call(bookingDetails, 'zone') && Object.hasOwnProperty.call(bookingDetails.zone, 'isLoyaltySupported') && bookingDetails.zone.isLoyaltySupported == '1' && bookingDetails.booking.validated != '1' && (bookingDetails.booking.TypeOfBooking == 'Guest' || bookingDetails.booking.TypeOfBooking == 'Transient' || bookingDetails.booking.TypeOfBooking == 'Self reservation')">
-                                    <v-card flat color="#F4F4F4" class="ma-0 rounded-lg " tile max-width="100%" >
+                                    <v-card flat color="#F4F4F4" class="ma-0 rounded-lg " tile max-width="100%">
                                         <v-card-text class="pb-0">
                                             <v-row class="text-center pt-0" no-gutters>
                                                 <v-col cols="12" class="pa-0">
@@ -213,7 +213,230 @@
                                                 bookingDetails.booking.validated != '1' &&
                                                 bookingDetails.booking.isValidationEnabled == '1'
                                                 ">
-                                                <v-btn text style="font-size:15px;text-transform: none;text-decoration: underline;" color="#3D4C56
+                                                <v-btn text
+                                                    style="font-size:15px;text-transform: none;text-decoration: underline;"
+                                                    color="#3D4C56
+" class="no-upper-case" @click="openValidationDialog()">Apply
+                                                    Your Validation</v-btn>
+                                            </v-col>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-col>
+                            </v-container>
+                        </v-card-actions>
+                        <v-row no-gutters align="center" class="my-1">
+                            <v-col cols="12" class="pa-0 align-self-center text-center">
+                                <v-btn class="elevation-0 white--text" tile x-small color="green darken-2" v-show="bookingDetails.hasOwnProperty('booking') &&
+                                    bookingDetails.booking.hasOwnProperty('validated') &&
+                                    bookingDetails.booking.validated == '1'
+                                    ">VALIDATED</v-btn>
+                                <!-- <v-icon color="red" class="ml-2" v-show="(bookingDetails.hasOwnProperty('booking') && bookingDetails.booking.validated == '1' && showPaymentCardAdded == '1')" >approval</v-icon> -->
+                            </v-col>
+                        </v-row>
+                        <v-row class="justify-center mb-3" no-gutters v-show="Object.hasOwnProperty.call(bookingDetails, 'zone') &&
+                            !(bookingDetails.zone.isGated == '0')
+                            ">
+                            <span class="grey--text text--darken-1 font-weight-bold"
+                                v-if="showPaymentCardAdded && (isCheckoutEnabled(1) || isCheckoutEnabled(2) || isCheckoutEnabled(3))">Click
+                                an option below to exit</span>
+                        </v-row>
+                        <v-row class="justify-center my-3" no-gutters
+                            v-show="!(isCheckoutEnabled(1) || isCheckoutEnabled(2) || isCheckoutEnabled(3))">
+                            <span class="black--text text--darken-1 font-weight-bold text-h5">Checked In</span>
+                        </v-row>
+                        <v-card-actions class="justify-center  px-0 pb-0" v-if="showPaymentCardAdded">
+                            <v-container class="pa-0" fluid>
+                                <v-row no-gutters class="text-center px-10" v-if="bookingDetails.hasOwnProperty('exitOptions') &&
+                                    Object.hasOwnProperty.call(bookingDetails, 'zone') &&
+                                    !(bookingDetails.zone.isGated == '0') && bookingDetails.exitOptions.length > 0
+                                    ">
+                                    <v-col v-if="isCheckoutEnabled(1)">
+                                        <v-avatar color="white" class="pa-6" @click="openSMSDialog()">
+                                            <v-icon medium color="black accent-2 " class="px-4 avatar-border" dark>
+                                                {{
+                                                    getExitIcon(1)
+                                                }}
+                                            </v-icon>
+                                        </v-avatar>
+                                        <p class="grey--text text--darken-1 exit-option-text">
+                                            {{ getExitText(1) }}
+                                        </p>
+                                    </v-col>
+                                    <v-col v-if="isCheckoutEnabled(2)">
+                                        <v-avatar color="transparent" class="pa-6 " @click.stop="openSmsQrScanner()">
+                                            <v-icon medium color="black accent-2" class="px-4 avatar-border" dark>
+                                                {{
+                                                    getExitIcon(2)
+                                                }}
+                                            </v-icon>
+                                        </v-avatar>
+                                        <p class="grey--text text--darken-1 exit-option-text">
+                                            {{ getExitText(2) }}
+                                        </p>
+                                    </v-col>
+                                    <v-col v-if="isCheckoutEnabled(3)">
+                                        <v-avatar color="transparent" class="pa-6" @click="dialerDialog = true">
+                                            <v-icon medium color="black accent-2 " class="px-4 avatar-border" dark>
+                                                {{
+                                                    getExitIcon(3)
+                                                }}
+                                            </v-icon>
+                                        </v-avatar>
+                                        <p class="grey--text text--darken-1 exit-option-text">{{ getExitText(3) }}</p>
+                                    </v-col>
+                                </v-row>
+                                <v-row no-gutters
+                                    v-if="bookingDetails.zone.isPQREndReservation == 1 && bookingDetails.booking.TypeOfBooking == 'Self reservation'">
+                                    <v-col cols="12" class="px-2 mt-4">
+                                        <v-btn rounded elevation="20" class="add_licence_plate_btn white--text"
+                                            @click="openExtDialog()">Extend
+                                            Parking</v-btn>
+                                    </v-col>
+                                </v-row>
+                                <v-row no-gutters v-show="Object.hasOwnProperty.call(bookingDetails, 'zone') &&
+                                    !(bookingDetails.zone.isGated == '0') && (isCheckoutEnabled(1) || isCheckoutEnabled(2) || isCheckoutEnabled(3))
+                                    ">
+                                    <v-col cols="12" class="mt-4 pb-2  px-4 text-center color-black"
+                                        style="font-size: 12px">
+                                        <p class="mb-0">
+                                            When you're ready to leave, please look for the
+                                            <strong>3 digit</strong> gate code on the sign in the exit
+                                            lane. Type that code when prompted. Have a good day!
+                                        </p>
+                                    </v-col>
+                                </v-row>
+                                <v-row no-gutters class="text-center pb-2 mt-1" v-show="Object.hasOwnProperty.call(bookingDetails, 'zone') &&
+                                    bookingDetails.zone.isGated == '0' &&
+                                    bookingDetails.booking.cardOnfile == '1' &&
+                                    validatedDateTime <= 0
+                                    ">
+                                    <v-col cols="12" class="mt-4 px-2 color-black px-4" style="font-size: 12px">
+                                        <p class="mb-0">
+                                            The card on file will be automatically charged for the time
+                                            parked when you exit the garage.
+                                        </p>
+                                    </v-col>
+                                </v-row>
+
+                                <v-row no-gutters>
+                                    <v-col cols="12" class="mt-4 text-center  pb-2" v-show="bookingDetails.hasOwnProperty('booking') &&
+                                        bookingDetails.booking.hasOwnProperty('cardNo') &&
+                                        bookingDetails.booking.hasOwnProperty('accountType') &&
+                                        bookingDetails.booking.hasOwnProperty('cardUpdated') &&
+                                        !(bookingDetails.booking.cardUpdated == '1') &&
+                                        (bookingDetails.booking.accountType == '2' ||
+                                            (bookingDetails.booking.cardOnfile == '1' &&
+                                                bookingDetails.booking.accountType == '0')) &&
+                                        !(bookingDetails.booking.tapToChangeCard == '0') && !(bookingDetails.booking.paymentType == 'APPLE_PAY' || bookingDetails.booking.paymentType == 'GOOGLE_PAY')
+                                        ">
+                                        <a class="text-caption" @click="navigateToAddPayment()">Tap to change card</a>
+                                    </v-col>
+                                </v-row>
+                                <v-row no-gutters>
+                                    <v-col cols="12" class="mt-4 text-center color-black px-4" style="font-size: 12px"
+                                        v-show="Object.hasOwnProperty.call(bookingDetails, 'zone') &&
+                                            !(bookingDetails.zone.isGated == '1') &&
+                                            validatedDateTime <= 0 &&
+                                            bookingDetails.booking.cardOnfile != '1'
+                                            ">
+                                        <p>
+                                            A valid credit card is required to park. Without one, you
+                                            could be subject to a parking violation and issued a
+                                            citation.
+                                        </p>
+                                    </v-col>
+                                </v-row>
+                                <v-row no-gutters>
+                                    <v-col cols="12" class="mt-4 text-center color-black px-4 pb-2" style="font-size: 12px"
+                                        v-show="bookingDetails.hasOwnProperty('booking') &&
+                                            bookingDetails.booking.hasOwnProperty('validated') &&
+                                            bookingDetails.booking.validated == '1' &&
+                                            validatedDateTime > 0
+                                            ">
+                                        <p>
+                                            Exiting after the validated time period will require a valid
+                                            credit card to continue parking. Without one, you could be
+                                            subject to a parking violation and issued a citation.
+                                        </p>
+                                    </v-col>
+                                </v-row>
+                                <v-row no-gutters class="mt-2"
+                                    v-if="Object.hasOwnProperty.call(bookingDetails, 'booking') && Object.hasOwnProperty.call(bookingDetails.booking, 'paymentType') && bookingDetails.booking.paymentType != '' && (bookingDetails.booking.paymentType == 'APPLE_PAY' || bookingDetails.booking.paymentType == 'GOOGLE_PAY')">
+                                    <v-col cols="12" class="text-center font-weight-bold">
+                                        <span style="font-size: 13px;">Authorized with {{
+                                            getPaymentType(bookingDetails.booking.paymentType) }}</span>
+                                    </v-col>
+                                </v-row>
+                                <v-row no-gutters>
+                                    <v-col cols="12" class="px-4 mt-4 text-center color-black font-weight-bold"
+                                        style="font-size: 13px" v-show="(bookingDetails.hasOwnProperty('booking') &&
+                                            bookingDetails.booking.hasOwnProperty('cardNo') &&
+                                            bookingDetails.booking.hasOwnProperty('accountType') &&
+                                            bookingDetails.booking.accountType == '2') ||
+                                            (bookingDetails.booking.cardOnfile == '1' &&
+                                                (bookingDetails.booking.accountType == '0' ||
+                                                    bookingDetails.booking.accountType == '1') &&
+                                                !(
+                                                    bookingDetails.booking.cardNo == '0' ||
+                                                    bookingDetails.booking.cardNo == '' ||
+                                                    bookingDetails.booking.cardNo == null
+                                                ))
+                                            ">
+                                        <p class="mb-0 pb-4 ">
+                                            Card ending with *{{
+                                                bookingDetails.hasOwnProperty("booking") &&
+                                                bookingDetails.booking.hasOwnProperty("cardNo")
+                                                ? bookingDetails.booking.cardNo
+                                                : ""
+                                            }}
+                                            on file
+                                        </p>
+                                    </v-col>
+                                </v-row>
+                                <v-row no-gutters
+                                    v-if="bookingDetails.zone.isPQREndReservation == 1 &&
+                                            (bookingDetails.booking.cardOnfile == '1' || bookingDetails.booking.cardOnfile == '2') && (bookingDetails.booking.TypeOfBooking == 'Guest' || bookingDetails.booking.TypeOfBooking == 'Transient')">
+                                    <v-col cols="12" class="mt-3 pb-2 text-center">
+                                        <v-btn text color="primary"
+                                            style="font-size: 13px;font-weight: bolder;text-decoration: underline;"
+                                            @click="hotelGuest">
+                                            <font-awesome-icon class="mr-1" icon="fa-solid fa-hotel"
+                                                style="font-size: 1.5rem;color: #1E3050;" /> I am an
+                                            overnight
+                                            hotel guest</v-btn>
+                                    </v-col>
+                                </v-row>
+                                <v-col cols="12" class="mt-2 pa-0"
+                                    v-if="(bookingDetails.hasOwnProperty('booking') &&
+                                        bookingDetails.booking.hasOwnProperty('validated') &&
+                                        bookingDetails.booking.validated != '1' &&
+                                        bookingDetails.booking.isValidationEnabled == '1') || Object.hasOwnProperty.call(bookingDetails, 'zone') && Object.hasOwnProperty.call(bookingDetails.zone, 'isLoyaltySupported') && bookingDetails.zone.isLoyaltySupported == '1' && bookingDetails.booking.validated != '1' && (bookingDetails.booking.TypeOfBooking == 'Guest' || bookingDetails.booking.TypeOfBooking == 'Transient' || bookingDetails.booking.TypeOfBooking == 'Self reservation')">
+                                    <v-card flat color="#F4F4F4" class="ma-0 rounded-lg " tile max-width="100%">
+                                        <v-card-text class="pb-0">
+                                            <v-row class="text-center pt-0" no-gutters>
+                                                <v-col cols="12" class="pa-0">
+                                                    <p style="font-size: 15px;color:#0000008C;font-weight: bolder;">
+                                                        CLAIM
+                                                        YOUR PARKING DISCOUNT</p>
+                                                </v-col>
+                                                <v-col cols="12"
+                                                    v-if="Object.hasOwnProperty.call(bookingDetails, 'zone') && Object.hasOwnProperty.call(bookingDetails.zone, 'isLoyaltySupported') && bookingDetails.zone.isLoyaltySupported == '1' && bookingDetails.booking.validated != '1' && (bookingDetails.booking.TypeOfBooking == 'Guest' || bookingDetails.booking.TypeOfBooking == 'Transient' || bookingDetails.booking.TypeOfBooking == 'Self reservation')">
+                                                    <v-btn color="black" rounded class="pa-0 ma-0" width="230" height="50"
+                                                        elevation="20" @click="loyalty = true">
+                                                        <v-img src="@/assets/newGoldenNugget.jpg"
+                                                            style="border-radius: 1.2rem;" class max-width="230"
+                                                            height="60"></v-img>
+                                                    </v-btn>
+                                                </v-col>
+                                            </v-row>
+                                            <v-col cols="12" class="mt-1 px-4" v-show="bookingDetails.hasOwnProperty('booking') &&
+                                                bookingDetails.booking.hasOwnProperty('validated') &&
+                                                bookingDetails.booking.validated != '1' &&
+                                                bookingDetails.booking.isValidationEnabled == '1'
+                                                ">
+                                                <v-btn text
+                                                    style="font-size:15px;text-transform: none;text-decoration: underline;"
+                                                    color="#3D4C56
 " class="no-upper-case" @click="openValidationDialog()">Apply
                                                     Your Validation</v-btn>
                                             </v-col>
@@ -263,6 +486,7 @@
                 </v-row>
             </footer>
         </boiler-plate>
+        
     </v-container>
 </template>
 <script>
@@ -1192,7 +1416,7 @@ export default {
                 refId: this.bookingId,
                 statusText: "Parker clicked on ADD CREDIT CARD btn.",
             });
-            this.$router.replace({ path: "/addpayment" });
+            this.$router.push({ name: 'addpayment', query: { zcode: this.zoneDetails?.zcode, sessiontype: 'cico', state: 'addpayment' } });
         },
         openValidationDialog() {
             this.validateBookingDialog = true;

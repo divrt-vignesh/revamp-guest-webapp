@@ -17,14 +17,14 @@
                 </v-dialog>
 
                 <div class="form-wrapper">
-                    <form id="iframes" action method="GET">
+                    <form id="iframes" class="form-group" action method="GET">
                         <v-container class="pa-2" fluid>
                             <v-row no-gutters>
-                                <v-col cols="12" class="pa-0">
+                                <v-col cols="12" class="pa-0 mb-3">
                                     <label for="iframesCardNumber">CREDIT CARD*</label>
                                     <div id="iframesCardNumber" style="width: 100%"></div>
                                 </v-col>
-                                <v-col cols="6" class="pa-0">
+                                <v-col cols="6" class="pa-0 mb-3">
                                     <label for="iframesCardExpiration">EXP DATE*</label>
                                     <div id="iframesCardExpiration"></div>
                                 </v-col>
@@ -33,7 +33,7 @@
                                     <label for="iframesCardCvv">CVV*</label>
                                     <div id="iframesCardCvv"></div>
                                 </v-col>
-                                <v-col cols="12" class="pa-0 mb-2">
+                                <v-col cols="12" class="pa-0 mb-5">
                                     <label class="hps_label" for="postalCode">POSTAL CODE*</label>
                                     <div>
                                         <input ref="postalCodeInput" v-model="postalCode" class="hps_input" type="text"
@@ -101,7 +101,7 @@
                                 </p>
 
                                 <v-col cols="12" class="mt-10 text-center" v-show="showPaymentBtn">
-                                    <v-btn ref="submitBtn" rounded block elevation="20" class="white--text exit_dialog_btn"
+                                    <v-btn ref="submitBtn" block elevation="20" class="black--text add_licence_plate_btn"
                                         @click="onFormSubmit()">Submit</v-btn>
                                 </v-col>
                                 <!-- <v-col cols="12" class="mt-10 text-center">
@@ -379,6 +379,7 @@ export default {
                         height: "50px",
                         padding: "6px 6px",
                         "font-size": "14px",
+                        "font-weight": "600",
                         "line-height": "1.42857143",
                         color: "#555",
                         "background-color": "#fff",
@@ -941,11 +942,15 @@ input {
 }
 
 #heartland-frame-cardNumber {
+    border: 1px solid rgba(30, 30, 30, 0.46) !important;
+    border-radius: 5px !important;
     width: 100% !important;
 }
 
 #heartland-frame-cardExpiration,
 #heartland-frame-cardCvv {
+    border: 1px solid rgba(30, 30, 30, 0.46) !important;
+    border-radius: 5px !important;
     width: 100% !important;
 }
 
@@ -955,8 +960,26 @@ body {
 
 label[for="iframesCardNumber"],
 label[for="iframesCardExpiration"],
-label[for="iframesCardCvv"],
+label[for="iframesCardCvv"] {
+    position: absolute;
+    background-color: white;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-top: -8px;
+    margin-left: 20px;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 13px;
+    color: #8ca2ad;
+    line-height: 1.5;
+}
 label[for="postalCode"] {
+    position: absolute;
+    background-color: white;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-top: -12px;
+    margin-left: 20px;
     text-transform: uppercase;
     font-weight: bold;
     font-size: 13px;
@@ -985,6 +1008,7 @@ user agent stylesheet div {
     height: 50px;
     padding: 6px 6px;
     font-size: 14px;
+    font-weight: 600;
     line-height: 1.42857143;
     color: #555;
     background-color: #fff;
@@ -998,6 +1022,8 @@ user agent stylesheet div {
     -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
     transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
     width: 100%;
+    border: 1px solid rgba(30, 30, 30, 0.46) !important;
+    border-radius: 5px !important;
 }
 
 .add_payment_title {
@@ -1015,6 +1041,11 @@ user agent stylesheet div {
 
 .hps_label {
     text-transform: uppercase;
+    position: absolute;
+    margin-top: -13px;
+    background-color: white;
+    margin-left: 20px;
+    padding: 5px 5px;
     font-weight: bold;
     font-size: 13px;
     color: #8ca2ad;

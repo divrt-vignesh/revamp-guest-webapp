@@ -316,6 +316,10 @@ input {
   animation-direction: reverse;
 }
 
+.exit-option-text {
+  font-size: 14px;
+}
+
 .add_licence_plate_btn {
   border-radius: 7px;
   background-color: #FDAE33 !important;
@@ -332,6 +336,10 @@ input {
   }
 }
 
+.avatar-border {
+  border: 1px solid black;
+}
+
 .add_credit_card_btn {
   background-color: #FDAE33 !important;
   border-radius: 10px !important;
@@ -346,8 +354,8 @@ input {
   border-radius: 10px;
   overflow-x: hidden !important;
   overflow-y: scroll !important;
-  -webkit-scrollbar: none;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  // -webkit-scrollbar: none;
+  // -ms-overflow-style: none;
+  // scrollbar-width: none;
   max-height: 480px;
 }</style>
